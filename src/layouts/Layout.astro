@@ -12,10 +12,12 @@
 		<meta name="generator" content={Astro.generator} />
     <title>Gym App</title>
 	</head>
-	<body>
+	<body class="min-h-screen flex flex-col bg-gray-100">
     <Navigation />
+    <main class="flex-1 flex items-center justify-center">
 		<slot />
-	</body>
+	</main>
+</body>
 </html>
 
 <style>

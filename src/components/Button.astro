@@ -1,0 +1,19 @@
+---
+export interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'outline';
+  children: any;
+  [key: string]: any;
+}
+const { href, variant = 'primary', children, ...rest } = Astro.props;
+const baseClasses = {
+  primary: 'px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors',
+  secondary: 'px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors',
+  outline: 'px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors',
+};
+---
+{href ? (
+  <a href={href} class={baseClasses[variant]} {...rest}>{children}</a>
+) : (
+  <button type="button" class={baseClasses[variant]} {...rest}>{children}</button>
+)}

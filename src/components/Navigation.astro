@@ -1,5 +1,14 @@
 
-<header class="bg-mauve-800 text-slate-50 px-2"  id="navigation">
- this is the nav
+---
+import Button from './Button.astro';
+import ModifyWorkouts from './ModifyWorkouts.astro';
+---
+<header class="absolute w-full bg-gray-800 text-slate-50 px-2 h-12 flex items-center justify-between" id="navigation">
+  <button class="bg-gray-600 p-1 hover:cursor-pointer rounded">hamburger</button>
+  <div class="flex space-x-2">
+    <Button href="/calendar" variant="primary" title="Calendar">Calendar</Button>
+    <Button variant="secondary" id="openModifyModal" title="Modify">Modify</Button>
+  </div>
 </header>
+<ModifyWorkouts />
 
