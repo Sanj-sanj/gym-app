@@ -1,8 +1,7 @@
 //import { useState } from 'react';
 
 export default function WorkoutCard({ workout, isSelected, onSelect }) {
-  console.log(workout)
-
+  console.log('workou card', workout)
   return (
     <div className={`transition-all duration-300 ${isSelected ? 'w-full max-w-md mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button
