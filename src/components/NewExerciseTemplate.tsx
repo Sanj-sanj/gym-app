@@ -1,19 +1,17 @@
 import { useState } from 'react';
-import { TEMPLATE_OPTIONS, TEMPLATE_DATES, type TemplateOption} from '../data/workout-templates.ts';
+import { WORKOUT_TEMPLATE_OPTIONS, type TemplateOption} from '../data/workout-templates.ts';
 import NewWorkoutContent from './NewWorkoutContent.tsx';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
   const [workouts, setWorkouts] = useState<number[] | null>(null);
-  console.log(template)
-  console.log(workouts)
   
  return (
   !template ? (
       <div className="flex flex-wrap justify-center mt-6">
       one
       {
-        TEMPLATE_OPTIONS.map((opt) => (
+        WORKOUT_TEMPLATE_OPTIONS.map((opt) => (
           <button 
             key={opt.id}
             type="button" 
@@ -34,7 +32,7 @@ export default function NewExerciseTemplate() {
       {template.name} 
       </h2>
       {
-        TEMPLATE_DATES[template.id].map((opt) => (
+        template.programming.map((opt) => (
           <button 
             key={opt.id}
             type="button" 

@@ -1,9 +1,12 @@
 import type { RepSchemeByLiftType } from "../data/workout-templates";
 import type { WorkoutType } from "../data/workouts";
 
-export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: 
-  { workout: WorkoutType, isSelected: boolean, repScheme: RepSchemeByLiftType, onSelect: (id: string) => void}) {
-
+export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: {
+  workout: WorkoutType,
+  isSelected: boolean,
+  repScheme:RepSchemeByLiftType,
+  onSelect: (id: string) => void
+}) {
   console.log( workout, isSelected, repScheme, onSelect )
   return (
     <div className={`transition-all duration-300 ${isSelected ? 'w-full max-w-md mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
