@@ -4,7 +4,7 @@ import type { WorkoutType } from "../data/workouts";
 export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: {
   workout: WorkoutType,
   isSelected: boolean,
-  repScheme:RepSchemeByLiftType,
+  repScheme: RepSchemeByLiftType,
   onSelect: (id: string) => void
 }) {
   console.log( workout, isSelected, repScheme, onSelect )
