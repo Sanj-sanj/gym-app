@@ -51,7 +51,11 @@ export default function NewExerciseTemplate() {
           </button>
         ))
       }
-      <button onClick={() => setTemplate(null)}>go back to templates</button> 
+      <button 
+      onClick={() => setTemplate(null)} 
+      className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+      Back
+      </button> 
       </>
     ) :  
       template && workouts ? (
@@ -60,7 +64,11 @@ export default function NewExerciseTemplate() {
           {template.name} 
         </h2>
         <NewWorkoutContent exercises={workouts} template={template} />
-      <button onClick={() => setWorkouts(null)}>go back lift viewer</button> 
+      <button 
+      onClick={() => setWorkouts(null)} 
+      className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+      Back
+      </button> 
       </div>
     ) : <></>
  )
