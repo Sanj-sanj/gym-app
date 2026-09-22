@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import { WORKOUT_TEMPLATE_OPTIONS, type TemplateOption} from '../data/workout-templates.ts';
 import NewWorkoutContent from './NewWorkoutContent.tsx';
+import { userContext } from '../data/UserData.tsx';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
   const [workouts, setWorkouts] = useState<number[] | null>(null);
 
+
+  function userSelectProgram(opt: TemplateOption) {
+    setTemplate(opt)
+    userContext.setKey('userTemplateInProgress', opt.id)
+    userContext.setKey('lastDayAttempt', 'day1')
+    userContext.setKey('lastWeekAttempt', 'w1')
+  }
   console.log('renderf')
 
   return (
@@ -16,7 +24,7 @@ export default function NewExerciseTemplate() {
           <button 
             key={opt.id}
            type="button" 
-            onClick={() => setTemplate(opt)}
+            onClick={() => userSelectProgram(opt)}
             className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
           >
           {opt.name}
@@ -43,6 +51,7 @@ export default function NewExerciseTemplate() {
           </button>
         ))
       }
+      <button onClick={() => setTemplate(null)}>go back to templates</button> 
       </>
     ) :  
       template && workouts ? (
@@ -51,6 +60,7 @@ export default function NewExerciseTemplate() {
           {template.name} 
         </h2>
         <NewWorkoutContent exercises={workouts} template={template} />
+      <button onClick={() => setWorkouts(null)}>go back lift viewer</button> 
       </div>
     ) : <></>
  )
