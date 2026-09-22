@@ -3,7 +3,7 @@ import { workouts } from '../data/workouts.ts';
 import WorkoutCard from './WorkoutCard.tsx';
 import type { TemplateOption } from '../data/workout-templates.ts';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
-import { InitialContext } from '../data/UserData.tsx';
+import { userContext } from '../data/UserData.tsx';
 
 export default function NewWorkoutContent({exercises, template}: {exercises: number[], template: TemplateOption}) {
 
@@ -42,7 +42,7 @@ export default function NewWorkoutContent({exercises, template}: {exercises: num
       : <div> no workouts prepared </div> 
 
     }
-    <button onClick={() => console.log(InitialContext.value)}>someshit</button>
+    <button onClick={() => console.log(userContext.value)}>someshit</button>
     </div>
   );
 }
