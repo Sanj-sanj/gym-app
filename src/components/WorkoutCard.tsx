@@ -1,13 +1,12 @@
-import type { RepSchemeByLiftType } from "../data/workout-templates";
 import type { WorkoutType } from "../data/workouts";
 
-export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: {
+export default function WorkoutCard({ workout, isSelected, reps, onSelect }: {
   workout: WorkoutType,
   isSelected: boolean,
-  repScheme: RepSchemeByLiftType,
+  reps: string[] |number[],
   onSelect: (id: string) => void
 }) {
-  console.log( workout, isSelected, repScheme, onSelect )
+  //console.log( workout, isSelected, repScheme, onSelect )
   return (
     <div className={`transition-all duration-300 ${isSelected ? 'w-full max-w-md mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button
@@ -22,7 +21,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
           {//repscheme needs working, main lift will not display untill component has access to user info
             // ex: is week 1 ? is week 2? 
           }
-          {repScheme?.map(n => n)} 
+          {reps?.map(n => n)} 
           <img
             src={workout.image}
             alt={workout.name}

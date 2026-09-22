@@ -2,13 +2,18 @@ import { useState } from 'react';
 import { workouts } from '../data/workouts.ts';
 import WorkoutCard from './WorkoutCard.tsx';
 import type { TemplateOption } from '../data/workout-templates.ts';
+import repSchemeSolver from '../utils/repSchemeDecypher.ts';
+import { InitialContext } from '../data/UserData.tsx';
 
-export default function NewWorkoutContent({exercises, template}: {exercises: number[], template: Pick<TemplateOption, 'repScheme'>}) {
+export default function NewWorkoutContent({exercises, template}: {exercises: number[], template: TemplateOption}) {
 
-  //  we can set reps based on order of exercise appearance
+  //  we can set re ps based on order of exercise appearance
   //set the current individual workout ID to this state
   const [selectedLift, setSelectedLift] = useState<{id: string, appearance: number}| null>(null);
 
+  console.log('1', exercises)
+  console.log('2', template)
+  console.log('3', selectedLift)
   return (
     <div className="flex flex-wrap justify-center mt-6">
     { exercises.length ?
@@ -25,19 +30,19 @@ export default function NewWorkoutContent({exercises, template}: {exercises: num
           ) : <>no matching workouts</>
         })
         : (
-            <div>
-            tsu
           <WorkoutCard
           key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
           workout={workouts.find((w) => w.id === selectedLift.id)}
-          repScheme={selectedLift.appearance <= 1 ? template.repScheme.tier1 : template.repScheme.accessory}
+          //repScheme={selectedLift.appearance <= 1 ? template.repScheme.tier1 : template.repScheme.accessory}
+          reps={repSchemeSolver(template.repScheme, selectedLift.appearance, 'w1')}
           isSelected={true}
           onSelect={() => setSelectedLift(null)}
           />
-          </div>
         )
       : <div> no workouts prepared </div> 
+
     }
+    <button onClick={() => console.log(InitialContext.value)}>someshit</button>
     </div>
   );
 }

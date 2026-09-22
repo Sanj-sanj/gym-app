@@ -5,18 +5,19 @@ import NewWorkoutContent from './NewWorkoutContent.tsx';
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
   const [workouts, setWorkouts] = useState<number[] | null>(null);
-  
- return (
+
+  console.log('renderf')
+
+  return (
   !template ? (
-      <div className="flex flex-wrap justify-center mt-6">
-      one
+      <div className="flex flex-wrap flex-col justify-center mt-6">
       {
         WORKOUT_TEMPLATE_OPTIONS.map((opt) => (
           <button 
             key={opt.id}
-            type="button" 
+           type="button" 
             onClick={() => setTemplate(opt)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
           >
           {opt.name}
           </button>
@@ -26,34 +27,32 @@ export default function NewExerciseTemplate() {
     ) :
 
   template && !workouts ? (
-      <div>
-      two
+      <>
       <h2 className="text-xl font-semibold mb-4 text-center">
       {template.name} 
       </h2>
       {
-        template.programming.map((opt) => (
+        Object.values(template.programming).map((opt) => (
           <button 
-            key={opt.id}
+            key={opt.name}
             type="button" 
             onClick={() => setWorkouts(opt.exercise_id)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
           >
           {opt.name}
           </button>
         ))
       }
-      </div>
+      </>
     ) :  
       template && workouts ? (
       <div>
-        three
         <h2 className="text-xl font-semibold mb-4 text-center">
           {template.name} 
         </h2>
-        <button onClick={() => console.log(template, workouts)} > define list </button>
         <NewWorkoutContent exercises={workouts} template={template} />
       </div>
     ) : <></>
  )
 }
+
