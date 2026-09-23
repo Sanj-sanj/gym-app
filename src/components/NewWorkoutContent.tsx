@@ -37,7 +37,7 @@ export default function NewWorkoutContent({exercises, template}: {exercises: num
         )
       : <div> no workouts prepared </div> 
     }
-    <button onClick={() => console.log(userContext.value)}>someshit</button>
+    <button onClick={() => console.log(workouts)}>someshit</button>
     </div>
   );
 }

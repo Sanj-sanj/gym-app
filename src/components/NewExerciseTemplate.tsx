@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { WORKOUT_TEMPLATE_OPTIONS, type TemplateOption} from '../data/workout-templates.ts';
-import NewWorkoutContent from './NewWorkoutContent.tsx';
+import { type WorkoutType, workouts } from '../data/workouts'
+import WorkoutCard from './WorkoutCard.tsx';
+import repSchemeSolver from '../utils/repSchemeDecypher.ts';
 import { userContext } from '../data/UserData.tsx';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
-  const [workouts, setWorkouts] = useState<number[] | null>(null);
+  const [workoutProgramming, setWorkoutProgramming] = useState<number[] | null>(null);
+  const [selectedLift, setSelectedLift] = useState<{id: string, appearance: number}| null>(null);
 
-
+  console.log(1, workouts)
   function userSelectProgram(opt: TemplateOption) {
     setTemplate(opt)
     userContext.setKey('userTemplateInProgress', opt.id)
@@ -35,7 +38,7 @@ export default function NewExerciseTemplate() {
         }
         </div>
       ) :
-        template && !workouts ? (
+        template && !workoutProgramming ? (
           <>
           <h2 className="text-xl font-semibold mb-4 text-center">
           {template.name} 
@@ -45,7 +48,7 @@ export default function NewExerciseTemplate() {
               <button 
               key={opt.name}
               type="button" 
-              onClick={() => setWorkouts(opt.exercise_id)}
+              onClick={() => setWorkoutProgramming(opt.exercise_id)}
               className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
               >
               {opt.name}
@@ -59,18 +62,50 @@ export default function NewExerciseTemplate() {
           </button> 
           </>
       ) :  
-        template && workouts ? (
+        template && workoutProgramming ? (
           <>
           <h2 className="text-xl font-semibold mb-4 text-center">
           {template.name} 
           </h2>
-          <NewWorkoutContent exercises={workouts} template={template} />
+          {
+          //<NewWorkoutContent exercises={workouts} template={template} />
+          }
+
+  (
+    <div className="flex flex-wrap justify-center mt-6">
+    { workoutProgramming.length ?
+      selectedLift === null
+        ? workoutProgramming.map((n) => {
+          const match = workouts.find((workout) => workout.id === n.toString())
+          return match ? (
+            <WorkoutCard 
+            key={match.id} 
+            workout={match} 
+            isSelected={false} 
+            onSelect={(id:string) => setSelectedLift({id, appearance: workoutProgramming.indexOf(Number(id))})} 
+            />
+          ) : <>no matching workouts</>
+        })
+        : (
+          <WorkoutCard
+          key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
+          workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutType}
+          reps={repSchemeSolver(template.repScheme, selectedLift.appearance, 'w1')}
+          isSelected={true}
+          onSelect={() => setSelectedLift(null)}
+          />
+        )
+      : <div> no workouts prepared </div> 
+    }
+    <button onClick={() => console.log(userContext.value)}>someshit</button>
+    </div>
+  );
           </>
       ) : <></>
     }
     { workouts && (
       <button 
-      onClick={() => setWorkouts(null)} 
+      onClick={() => setWorkoutProgramming(null)} 
       className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
       Days
       </button> 
