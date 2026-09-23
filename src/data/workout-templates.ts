@@ -48,7 +48,7 @@ export const WORKOUT_TEMPLATE_OPTIONS:TemplateOption[] = [
     id: '531',
     name: '5/3/1', 
     repScheme: {
-        accessory: ['10','10','10','10','10','10'], 
+        accessory: ['10','10','10','10','10'], 
         tier1: {
           w1: ['5','5','3','5','5','5+'], 
           w2: ['5','5','3','3','3','3+'], 

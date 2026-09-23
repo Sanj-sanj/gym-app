@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { workouts } from '../data/workouts.ts';
+import { workouts, type WorkoutType } from '../data/workouts.ts';
 import WorkoutCard from './WorkoutCard.tsx';
 import type { TemplateOption } from '../data/workout-templates.ts';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
@@ -11,9 +11,6 @@ export default function NewWorkoutContent({exercises, template}: {exercises: num
   //set the current individual workout ID to this state
   const [selectedLift, setSelectedLift] = useState<{id: string, appearance: number}| null>(null);
 
-  console.log('1', exercises)
-  console.log('2', template)
-  console.log('3', selectedLift)
   return (
     <div className="flex flex-wrap justify-center mt-6">
     { exercises.length ?
@@ -32,15 +29,13 @@ export default function NewWorkoutContent({exercises, template}: {exercises: num
         : (
           <WorkoutCard
           key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
-          workout={workouts.find((w) => w.id === selectedLift.id)}
-          //repScheme={selectedLift.appearance <= 1 ? template.repScheme.tier1 : template.repScheme.accessory}
+          workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutType}
           reps={repSchemeSolver(template.repScheme, selectedLift.appearance, 'w1')}
           isSelected={true}
           onSelect={() => setSelectedLift(null)}
           />
         )
       : <div> no workouts prepared </div> 
-
     }
     <button onClick={() => console.log(userContext.value)}>someshit</button>
     </div>

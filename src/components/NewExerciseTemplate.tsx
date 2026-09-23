@@ -17,60 +17,65 @@ export default function NewExerciseTemplate() {
   console.log('renderf')
 
   return (
-  !template ? (
-      <div className="flex flex-wrap flex-col justify-center mt-6">
-      {
-        WORKOUT_TEMPLATE_OPTIONS.map((opt) => (
-          <button 
+    <>
+    {
+      !template ? (
+        <div className="flex flex-wrap flex-col justify-center mt-6">
+        {
+          WORKOUT_TEMPLATE_OPTIONS.map((opt) => (
+            <button 
             key={opt.id}
-           type="button" 
+            type="button" 
             onClick={() => userSelectProgram(opt)}
             className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
-          >
-          {opt.name}
-          </button>
-        ))
-      }
-      </div>
-    ) :
-
-  template && !workouts ? (
-      <>
-      <h2 className="text-xl font-semibold mb-4 text-center">
-      {template.name} 
-      </h2>
-      {
-        Object.values(template.programming).map((opt) => (
-          <button 
-            key={opt.name}
-            type="button" 
-            onClick={() => setWorkouts(opt.exercise_id)}
-            className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
-          >
-          {opt.name}
-          </button>
-        ))
-      }
-      <button 
-      onClick={() => setTemplate(null)} 
-      className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-      Back
-      </button> 
-      </>
-    ) :  
-      template && workouts ? (
-      <div>
-        <h2 className="text-xl font-semibold mb-4 text-center">
+            >
+            {opt.name}
+            </button>
+          ))
+        }
+        </div>
+      ) :
+        template && !workouts ? (
+          <>
+          <h2 className="text-xl font-semibold mb-4 text-center">
           {template.name} 
-        </h2>
-        <NewWorkoutContent exercises={workouts} template={template} />
+          </h2>
+          {
+            Object.values(template.programming).map((opt) => (
+              <button 
+              key={opt.name}
+              type="button" 
+              onClick={() => setWorkouts(opt.exercise_id)}
+              className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+              >
+              {opt.name}
+              </button>
+            ))
+          }
+          <button 
+          onClick={() => setTemplate(null)} 
+          className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+          Template
+          </button> 
+          </>
+      ) :  
+        template && workouts ? (
+          <>
+          <h2 className="text-xl font-semibold mb-4 text-center">
+          {template.name} 
+          </h2>
+          <NewWorkoutContent exercises={workouts} template={template} />
+          </>
+      ) : <></>
+    }
+    { workouts && (
       <button 
       onClick={() => setWorkouts(null)} 
       className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-      Back
+      Days
       </button> 
-      </div>
-    ) : <></>
- )
+    )}
+    </>
+  )
 }
 

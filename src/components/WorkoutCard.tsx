@@ -3,28 +3,31 @@ import type { WorkoutType } from "../data/workouts";
 export default function WorkoutCard({ workout, isSelected, reps, onSelect }: {
   workout: WorkoutType,
   isSelected: boolean,
-  reps: string[] |number[],
+  reps?: string[] |number[],
   onSelect: (id: string) => void
 }) {
-  //console.log( workout, isSelected, repScheme, onSelect )
   return (
     <div className={`transition-all duration-300 ${isSelected ? 'w-full max-w-md mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button
         onClick={() => onSelect(workout.id)}
         className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'}`}
       >
+      {isSelected && "🔙"}
         {workout.name}
       </button>
       {isSelected && (
-        <div className="mt-4 p-4 bg-white rounded shadow">
+        <div className="text-center mt-4 p-4 bg-white rounded shadow">
           <h3 className="text-xl font-bold">{workout.name}</h3>
           {//repscheme needs working, main lift will not display untill component has access to user info
             // ex: is week 1 ? is week 2? 
           }
-          {reps?.map(n => n)} 
+          Rep Scheme: {" "}
+          <ol>
+          {reps?.map((n,i)=> (<li key={i}>Set {i+1}: {n}</li>))} 
+          </ol>
           <img
             src={workout.image}
-            alt={workout.name}
+            alt={workout.name + ' img'}
             className="w-full h-48 object-cover rounded mt-2"
           />
           <p className="mt-2 text-gray-700">{workout.description}</p>

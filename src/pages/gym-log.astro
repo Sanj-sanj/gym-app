@@ -1,12 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Button from '../components/Button.astro';
+import Log from '../components/Log'
 ---
 <Layout>
   <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-8">
     <div class="text-center">
       <h1 class="text-2xl font-bold">Gym Log Page</h1>
       <p class="mt-4">Here you can view your gym log.</p>
+      <Log content='hi' title='my'/>
     </div>
     <Button href="/" variant="outline" title="Return to home" innerText='Return to home' />
   </div>
