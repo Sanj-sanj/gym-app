@@ -9,7 +9,7 @@ const existingUser = userContext.get().userName
 ---
 <Layout>
   {!existingUser ? <Modal client:load useCase='new user' /> : null }
-  <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-8">
+  <div class="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100 py-8">
       <NewExerciseTemplate client:load />
       <el class="mt-2"></el>
       <Button href="/" variant="outline" title="Start over" innerText='Start over' />
