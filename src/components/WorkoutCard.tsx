@@ -1,13 +1,13 @@
 import type { WorkoutType } from "../data/workouts";
 
-export default function WorkoutCard({ workout, isSelected, reps, onSelect }: {
+export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: {
   workout: WorkoutType,
   isSelected: boolean,
-  reps?: string[] |number[],
+  repScheme: {reps: string[], percents: number[]},
   onSelect: (id: string) => void
 }) {
   return (
-    <div className={`transition-all duration-300 ${isSelected ? 'w-10/12 sm:w-96 mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
+    <div className={`transition-all duration-300 delay-700 ${isSelected ? 'w-10/12 sm:w-96 mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button
         onClick={!isSelected ? () => onSelect(workout.id) : () => {}}
         className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'}`}
@@ -20,7 +20,7 @@ export default function WorkoutCard({ workout, isSelected, reps, onSelect }: {
             <h3 className="text-xl font-bold">{workout.name}</h3>
             Rep Scheme: {" "}
             <ol>
-            {reps?.map((n,i)=> (<li key={i}>Set {i+1}: {n}</li>))} 
+            {repScheme?.reps.map((n,i)=> (<li key={i}>Set {i+1}: {n} percents: {repScheme.percents[i]}</li>))} 
             </ol>
             <img
               src={workout.image}

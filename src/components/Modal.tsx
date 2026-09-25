@@ -8,14 +8,11 @@ export default function Modal({useCase}: {useCase: 'new user'}) {
 
 
   function closeModal() {
-    console.log(userContext.value) 
     if(nameInputRef.current && !nameInputRef.current.value){ 
-    console.log(2) 
       nameInputRef.current.placeholder = "Pick a name"
       nameInputRef.current.focus()
     }
     else if(nameInputRef.current) {
-    console.log(3) 
       userContext.setKey('userName', nameInputRef.current.value)
        isModalActive.set(!$isModalActive)
     }
@@ -33,9 +30,6 @@ export default function Modal({useCase}: {useCase: 'new user'}) {
     )
   }
 
-
-
-  console.log($isModalActive)
   return !$isModalActive ? (
     <div id="modifyModal" className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
     <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full">

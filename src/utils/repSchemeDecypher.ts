@@ -1,9 +1,9 @@
-import type { RepSchemeByLiftType } from '../data/workout-templates.ts';
+import type { TemplateOption, TemplateProgramWeeks } from '../data/workout-templates.ts';
 
 export default function repSchemeSolver(
-  repScheme: RepSchemeByLiftType,
+  template: TemplateOption,
   orderOfAppearance: number,
-  week: 'w1' | 'w2' | 'w3' | 'w4'
+  week: TemplateProgramWeeks,
 ) {
   const exerciseTier =
     orderOfAppearance === 0 ? 
@@ -11,7 +11,8 @@ export default function repSchemeSolver(
     orderOfAppearance === 1 ?
     'tier2' :
     'accessory' ;
+  const weightPercents = template.modifiers && template.modifiers[week][exerciseTier];
+  const reps = exerciseTier === 'accessory' ? template.repScheme.accessory : template.repScheme[exerciseTier][week];
 
-  if(exerciseTier === 'accessory') return repScheme.accessory
-  else return repScheme[exerciseTier][week]
+  return { reps, percents: weightPercents }
 }

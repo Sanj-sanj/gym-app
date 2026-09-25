@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { WORKOUT_TEMPLATE_OPTIONS, type TemplateOption} from '../data/workout-templates.ts';
+import { WORKOUT_TEMPLATE_OPTIONS, type TemplateOption } from '../data/workout-templates.ts';
 import { type WorkoutType, workouts } from '../data/workouts'
 import WorkoutCard from './WorkoutCard.tsx';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
@@ -10,14 +10,12 @@ export default function NewExerciseTemplate() {
   const [workoutProgramming, setWorkoutProgramming] = useState<number[] | null>(null);
   const [selectedLift, setSelectedLift] = useState<{id: string, appearance: number}| null>(null);
 
-  console.log(1, workouts)
   function userSelectProgram(opt: TemplateOption) {
     setTemplate(opt)
     userContext.setKey('userTemplateInProgress', opt.id)
     userContext.setKey('lastDayAttempt', 'day1')
     userContext.setKey('lastWeekAttempt', 'w1')
   }
-  console.log('renderf')
 
   return (
     <>
@@ -83,20 +81,18 @@ export default function NewExerciseTemplate() {
                     />
                   ) : <>No matching workouts</>
                 })}
-                <div className='flex justify-center'>
-                  <button 
-                  onClick={() => setWorkoutProgramming(null)} 
-                  className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+                  <div className='flex justify-center'>
+                  <button onClick={() => setWorkoutProgramming(null)} className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
                     Days
-                  </button> 
+                    </button> 
+                  </div>
                 </div>
-              </div>
                 : (
                   <WorkoutCard
                   key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
                   workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutType}
-                  reps={repSchemeSolver(template.repScheme, selectedLift.appearance, 'w1')}
                   isSelected={true}
+                  repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
                   onSelect={() => setSelectedLift(null)}
                   /> 
                 ) : <div> no workouts prepared </div> 
@@ -105,6 +101,7 @@ export default function NewExerciseTemplate() {
     </>
       ) : <></>
     }
+    <button onClick={() => console.log(template)}>someshit</button>
     </>
   )
 }
