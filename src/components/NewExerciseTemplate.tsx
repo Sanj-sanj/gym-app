@@ -53,9 +53,7 @@ export default function NewExerciseTemplate() {
               </button>
             ))
           }
-          <button 
-          onClick={() => setTemplate(null)} 
-          className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+          <button onClick={() => setTemplate(null)} className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
           Template
           </button> 
           </>
@@ -66,39 +64,38 @@ export default function NewExerciseTemplate() {
           {template.name} 
           </h2>
 
-          <div className="flex flex-wrap w-full justify-center mt-8">
+          <div className="flex flex-col flex-wrap w-full items-center mt-8">
           {workoutProgramming.length ?
-            selectedLift === null
-              ? <div className="flex flex-col"> 
-                {workoutProgramming.map((n) => {
-                  const match = workouts.find((workout) => workout.id === n.toString())
-                  return match ? (
-                    <WorkoutCard 
-                    key={match.id} 
-                    workout={match} 
-                    isSelected={false} 
-                    onSelect={(id:string) => setSelectedLift({id, appearance: workoutProgramming.indexOf(Number(id))})} 
-                    />
-                  ) : <>No matching workouts</>
-                })}
-                  <div className='flex justify-center'>
-                  <button onClick={() => setWorkoutProgramming(null)} className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-                    Days
-                    </button> 
-                  </div>
-                </div>
-                : (
-                  <WorkoutCard
-                  key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
-                  workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutType}
-                  isSelected={true}
-                  repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
-                  onSelect={() => setSelectedLift(null)}
-                  /> 
-                ) : <div> no workouts prepared </div> 
+            selectedLift === null ?
+            workoutProgramming.map((n) => {
+            const match = workouts.find((workout) => workout.id === n.toString())
+            return match ? (
+              <WorkoutCard 
+              key={match.id} 
+              workout={match} 
+              isSelected={false} 
+              onSelect={(id:string) => setSelectedLift({id, appearance: workoutProgramming.indexOf(Number(id))})} 
+              />
+            ) : <>No matching workouts</>
+          })
+            : (
+              <WorkoutCard
+              key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
+              workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutType}
+              isSelected={true}
+              repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
+              onSelect={() => setSelectedLift(null)}
+              /> 
+            ) : <div> no workouts prepared </div> 
           }
-    </div>
-    </>
+          </div>
+          { selectedLift === null ? (
+            <button onClick={() => setTemplate(null)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+            Days
+            </button> 
+          ) : null
+          }
+          </>
       ) : <></>
     }
     <button onClick={() => console.log(template)}>someshit</button>

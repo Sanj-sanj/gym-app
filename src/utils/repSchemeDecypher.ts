@@ -11,7 +11,7 @@ export default function repSchemeSolver(
     orderOfAppearance === 1 ?
     'tier2' :
     'accessory' ;
-  const weightPercents = template.modifiers && template.modifiers[week][exerciseTier];
+  const weightPercents = template.modifiers[week][exerciseTier];
   const reps = exerciseTier === 'accessory' ? template.repScheme.accessory : template.repScheme[exerciseTier][week];
 
   return { reps, percents: weightPercents }

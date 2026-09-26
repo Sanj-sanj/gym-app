@@ -3,7 +3,7 @@ import type { WorkoutType } from "../data/workouts";
 export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: {
   workout: WorkoutType,
   isSelected: boolean,
-  repScheme: {reps: string[], percents: number[]},
+  repScheme?: {reps: string[], percents: number[]},
   onSelect: (id: string) => void
 }) {
   return (
@@ -30,11 +30,9 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
             <p className="mt-2 text-gray-700">{workout.description}</p>
           </div>
         <div className="flex justify-center">
-          <button 
-          onClick={() => onSelect(workout.id)} 
-          className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-          Exercises
-          </button> 
+      <button onClick={() => onSelect(workout.id)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+      Exercises
+      </button> 
         </div>
         </>
       )}
