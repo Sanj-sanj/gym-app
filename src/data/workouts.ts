@@ -31,7 +31,7 @@ export const workouts: WorkoutType[] = [
   {
     id: '2',
     name: 'bench',
-    "current-training-max": 175,
+    "current-training-max": 182.72675,
     "upload-cycle-count": 1,
     "rep-record": 5,
     "rep-record-date": "09-14-26",
@@ -45,7 +45,7 @@ export const workouts: WorkoutType[] = [
   {
     id: '3',
     name: 'deadlift',
-    "current-training-max": 175,
+    "current-training-max": 295.71775,
     "upload-cycle-count": 1,
     "rep-record": 5,
     "rep-record-date": "09-14-26",

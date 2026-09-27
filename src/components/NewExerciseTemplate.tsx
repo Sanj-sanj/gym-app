@@ -7,7 +7,7 @@ import { userContext } from '../data/UserData.tsx';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
-  const [workoutProgramming, setWorkoutProgramming] = useState<number[] | null>(null);
+  const [workoutDay, setWorkoutDay] = useState<number[] | null>(null);
   const [selectedLift, setSelectedLift] = useState<{id: string, appearance: number}| null>(null);
 
   function userSelectProgram(opt: TemplateOption) {
@@ -36,7 +36,7 @@ export default function NewExerciseTemplate() {
         }
         </div>
       ) :
-        template && !workoutProgramming ? (
+        template && !workoutDay ? (
           <>
           <h2 className="text-xl font-semibold mb-4 text-center">
           {template.name} 
@@ -46,7 +46,7 @@ export default function NewExerciseTemplate() {
               <button 
               key={opt.name}
               type="button" 
-              onClick={() => setWorkoutProgramming(opt.exercise_id)}
+              onClick={() => setWorkoutDay(opt.exercise_id)}
               className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
               >
               {opt.name}
@@ -58,23 +58,24 @@ export default function NewExerciseTemplate() {
           </button> 
           </>
       ) :  
-        template && workoutProgramming ? (
+        template && workoutDay ? (
           <>
           <h2 className="text-xl font-semibold mb-4 text-center absolute top-1/12">
           {template.name} 
           </h2>
 
           <div className="flex flex-col flex-wrap w-full items-center mt-8">
-          {workoutProgramming.length ?
+          {workoutDay.length ?
             selectedLift === null ?
-            workoutProgramming.map((n) => {
+            workoutDay.map((n) => {
+            console.log('all')
             const match = workouts.find((workout) => workout.id === n.toString())
             return match ? (
               <WorkoutCard 
               key={match.id} 
               workout={match} 
               isSelected={false} 
-              onSelect={(id:string) => setSelectedLift({id, appearance: workoutProgramming.indexOf(Number(id))})} 
+              onSelect={(id:string) => setSelectedLift({id, appearance: workoutDay.indexOf(Number(id))})} 
               />
             ) : <>No matching workouts</>
           })
@@ -90,7 +91,7 @@ export default function NewExerciseTemplate() {
           }
           </div>
           { selectedLift === null ? (
-            <button onClick={() => setTemplate(null)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+            <button onClick={() => setWorkoutDay(null)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
             Days
             </button> 
           ) : null
