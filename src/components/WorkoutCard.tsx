@@ -10,16 +10,23 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
   return (
     <div className={`transition-all duration-300 delay-700 ${isSelected ? 'w-10/12 sm:w-96 mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button
+        title="Click/tap to preview"
         onClick={!isSelected ? () => onSelect(workout.id) : () => {}}
         className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'}`}
       >
         {workout.name}
       </button>
+
       {isSelected && (
         <>
-          <div className="text-center mt-4 p-4 bg-white rounded shadow">
+          <div className="text-center mt-4 p-4 bg-white rounded shadow relative">
             <h3 className="text-xl font-bold">{workout.name}</h3>
-            Rep Scheme: {" "}
+
+
+            <p>Current training max: {workout["current-training-max"]}</p>
+            <p>Initial 5 rep max: {workout["5rm"]}</p>
+            <h4 className="font-bold">Rep Scheme:</h4>
+
             <ol>
             {repScheme?.reps.map((n,i)=> (
               <li key={i} className='grid grid-cols-3'>
@@ -43,5 +50,6 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
         </>
       )}
     </div>
+
   );
 }

@@ -3,12 +3,18 @@ import { WORKOUT_TEMPLATE_OPTIONS, type TemplateOption } from '../data/workout-t
 import { type WorkoutType, workouts } from '../data/workouts'
 import WorkoutCard from './WorkoutCard.tsx';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
-import { userContext } from '../data/UserData.tsx';
+import { isModalActive, userContext } from '../data/UserData.tsx';
+import Modal from './Modal.tsx';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
   const [workoutDay, setWorkoutDay] = useState<number[] | null>(null);
   const [selectedLift, setSelectedLift] = useState<{id: string, appearance: number}| null>(null);
+
+  const existingUser = userContext.get().userName
+  const liftsBySelectedDay: WorkoutType[] = []
+
+  if(!existingUser) isModalActive.set(true); 
 
   function userSelectProgram(opt: TemplateOption) {
     setTemplate(opt)
@@ -16,7 +22,7 @@ export default function NewExerciseTemplate() {
     userContext.setKey('lastDayAttempt', 'day1')
     userContext.setKey('lastWeekAttempt', 'w1')
   }
-
+  const toggleEditView = () => isModalActive.set(true)
   return (
     <>
     {
@@ -70,6 +76,7 @@ export default function NewExerciseTemplate() {
             workoutDay.map((n) => {
             console.log('all')
             const match = workouts.find((workout) => workout.id === n.toString())
+            match && liftsBySelectedDay.push(match)
             return match ? (
               <WorkoutCard 
               key={match.id} 
@@ -91,15 +98,22 @@ export default function NewExerciseTemplate() {
           }
           </div>
           { selectedLift === null ? (
-            <button onClick={() => setWorkoutDay(null)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-            Days
-            </button> 
+            <>
+              <button onClick={() => toggleEditView()}
+              className="scale-150 absolute right-6 bottom-6 hover:bg-green-500 bg-green-600 outline-emerald-300 outline-3 rounded-3xl min-w-9 min-h-9 p-1" title="Modify lift">✏️</button> 
+              <button onClick={() => setWorkoutDay(null)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+                Days
+              </button> 
+            </>
           ) : null
           }
           </>
       ) : <></>
     }
     <button onClick={() => console.log(template)}>someshit</button>
+    {!existingUser ? <Modal useCase='new user'/> : null}
+    {isModalActive && existingUser ? console.log(liftsBySelectedDay): null}
+    {isModalActive && existingUser ? <Modal useCase="edit lift" workouts={liftsBySelectedDay} /> : null}
     </>
   )
 }

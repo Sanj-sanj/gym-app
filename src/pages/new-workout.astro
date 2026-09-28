@@ -2,13 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import NewExerciseTemplate from '../components/NewExerciseTemplate.tsx';
 import Button from '../components/Button.astro';
-import Modal from '../components/Modal';
-import { userContext } from '../data/UserData';
-
-const existingUser = userContext.get().userName
 ---
 <Layout>
-  {!existingUser ? <Modal client:load useCase='new user' /> : null }
   <div class="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100 py-8">
       <NewExerciseTemplate client:load />
       <el class="mt-2"></el>
