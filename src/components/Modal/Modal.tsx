@@ -1,8 +1,9 @@
 import { useStore } from "@nanostores/react"
-import { userContext, isModalActive } from "../data/UserData"
-import { useRef, useState, type RefObject } from "react"
-import type { WorkoutType } from "../data/workouts"
-import { WorkoutEntry } from "../utils/createWorkut"
+import { isModalActive } from "../../data/UserData"
+import { useRef, useState } from "react"
+import type { WorkoutType } from "../../data/workouts"
+import { WorkoutEntry } from "../../utils/createWorkut"
+import { ModalNewUser } from "./ModalNewUser"
 
 export default function Modal({useCase, workouts}: {useCase: 'new user' | 'edit lift', workouts?: WorkoutType[] | null}) {  
   const $isModalActive = useStore(isModalActive)
@@ -15,34 +16,6 @@ export default function Modal({useCase, workouts}: {useCase: 'new user' | 'edit 
   console.log('hi',bench.initialTrainingMax())
 
 
-  function newUserCase(ref:RefObject<HTMLInputElement | null>, ) {
-
-    function handleNameConfirmation(closeFunc: () => void) {
-      if(ref.current && !ref.current.value){ 
-        ref.current.placeholder = "Pick a name"
-        ref.current.focus()
-      }
-      else if(ref.current) {
-        const thisModal = document.querySelector('#modifyModal')
-        console.log(thisModal)
-        userContext.setKey('userName', ref.current.value)
-        closeFunc()
-      }
-    }
-    
-    return (
-      <>
-        <h2 className="text-xl font-semibold mb-4 text-center">Write your name</h2>
-        <label className="w-full flex justify-center">
-          Name: 
-          <input name='nameInput' ref={ref} className="outline rounded px-0.5 ml-3 outline-slate-900" ></input>
-        </label>
-        <div className="w-full flex justify-center">
-          <button id="closeModal" onClick={() => handleNameConfirmation(closeModal)} className="flex justify-center mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Submit</button>
-        </div>
-      </>
-    )
-  }
 
   function editLiftsCase(lifts: WorkoutType[]) {
     return (
@@ -72,7 +45,7 @@ export default function Modal({useCase, workouts}: {useCase: 'new user' | 'edit 
   return $isModalActive ? (
     <div id="modifyModal" className="fixed inset-0 flex items-center justify-center bg-black/70 z-50">
       <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full">
-        {useCase === 'new user' ? newUserCase(nameInputRef) : useCase === 'edit lift' ? editLiftsCase(workouts as WorkoutType[]) : <>someother cased</>}
+        {useCase === 'new user' ? ModalNewUser(nameInputRef, closeModal) : useCase === 'edit lift' ? editLiftsCase(workouts as WorkoutType[]) : <>someother cased</>}
       </div>
     </div>
   ) : null

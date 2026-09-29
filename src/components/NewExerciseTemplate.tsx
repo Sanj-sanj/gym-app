@@ -4,7 +4,7 @@ import { type WorkoutType, workouts } from '../data/workouts'
 import WorkoutCard from './WorkoutCard.tsx';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
 import { isModalActive, userContext } from '../data/UserData.tsx';
-import Modal from './Modal.tsx';
+import Modal from './Modal/Modal.tsx';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);

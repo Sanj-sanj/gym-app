@@ -13,6 +13,695 @@ export type WorkoutType = {
     img: string
   };
 
+  const workouts3 = [
+  {
+    "liftName": "squat",
+    "rm5": 0,
+    "description": "squat description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "bench",
+    "rm5": 0,
+    "description": "bench description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "deadlift",
+    "rm5": 0,
+    "description": "deadlift description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "press",
+    "rm5": 0,
+    "description": "press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "incline press",
+    "rm5": 0,
+    "description": "incline press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "front squat",
+    "rm5": 0,
+    "description": "front squat description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "stiff leg deadlift",
+    "rm5": 0,
+    "description": "stiff leg deadlift description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "close grip bench",
+    "rm5": 0,
+    "description": "close grip bench description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "barbell row",
+    "rm5": 0,
+    "description": "barbell row description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "lat pulldown",
+    "rm5": 0,
+    "description": "lat pulldown description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "reverse grip pulldown",
+    "rm5": 0,
+    "description": "reverse grip pulldown description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "dips",
+    "rm5": 0,
+    "description": "dips description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "chin ups",
+    "rm5": 0,
+    "description": "chin ups description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "barbell curl",
+    "rm5": 0,
+    "description": "barbell curl description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "skullcrushers",
+    "rm5": 0,
+    "description": "skullcrushers description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "DB press",
+    "rm5": 0,
+    "description": "DB press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "DB bench",
+    "rm5": 0,
+    "description": "DB bench description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "DB rows",
+    "rm5": 0,
+    "description": "DB rows description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "DB incline",
+    "rm5": 0,
+    "description": "DB incline description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "tricep pushdown",
+    "rm5": 0,
+    "description": "tricep pushdown description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "face pulls",
+    "rm5": 0,
+    "description": "face pulls description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "seated rows",
+    "rm5": 0,
+    "description": "seated rows description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "wrist curls",
+    "rm5": 0,
+    "description": "wrist curls description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "shrugs",
+    "rm5": 0,
+    "description": "shrugs description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "good morning",
+    "rm5": 0,
+    "description": "good morning description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "back raises",
+    "rm5": 0,
+    "description": "back raises description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "reverse hypers",
+    "rm5": 0,
+    "description": "reverse hypers description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "leg curls",
+    "rm5": 0,
+    "description": "leg curls description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "leg extensions",
+    "rm5": 0,
+    "description": "leg extensions description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "calf raises",
+    "rm5": 0,
+    "description": "calf raises description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "romainian deadlifts",
+    "rm5": 0,
+    "description": "romainian deadlifts description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "box squats",
+    "rm5": 0,
+    "description": "box squats description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "lunges",
+    "rm5": 0,
+    "description": "lunges description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "crunches",
+    "rm5": 0,
+    "description": "crunches description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "leg raises",
+    "rm5": 0,
+    "description": "leg raises description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "hack squat",
+    "rm5": 0,
+    "description": "hack squat description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "leg press",
+    "rm5": 0,
+    "description": "leg press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  {
+    "liftName": "DB side bends",
+    "rm5": 0,
+    "description": "DB side bends description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  }
+]
+
+  const workouts2 = {
+  "1": {
+    "liftName": "Squat",
+    "rm5": 0,
+    "description": "squat description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "2": {
+    "liftName": "Bench",
+    "rm5": 0,
+    "description": "bench description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "3": {
+    "liftName": "Deadlift",
+    "rm5": 0,
+    "description": "deadlift description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "4": {
+    "liftName": "Press",
+    "rm5": 0,
+    "description": "press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "5": {
+    "liftName": "Incline Press",
+    "rm5": 0,
+    "description": "incline press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "6": {
+    "liftName": "Front Squat",
+    "rm5": 0,
+    "description": "front squat description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "7": {
+    "liftName": "Stiff Leg Deadlift",
+    "rm5": 0,
+    "description": "stiff leg deadlift description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "8": {
+    "liftName": "Close Grip Bench",
+    "rm5": 0,
+    "description": "close grip bench description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "9": {
+    "liftName": "Barbell Row",
+    "rm5": 0,
+    "description": "barbell row description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "10": {
+    "liftName": "Lat Pulldown",
+    "rm5": 0,
+    "description": "lat pulldown description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "11": {
+    "liftName": "Reverse Grip Pulldown",
+    "rm5": 0,
+    "description": "reverse grip pulldown description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "12": {
+    "liftName": "Dips",
+    "rm5": 0,
+    "description": "dips description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "13": {
+    "liftName": "Chin Ups",
+    "rm5": 0,
+    "description": "chin ups description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "14": {
+    "liftNamE": "Barbell Curl",
+    "rm5": 0,
+    "description": "barbell curl description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "15": {
+    "liftName": "Skullcrushers",
+    "rm5": 0,
+    "description": "skullcrushers description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "16": {
+    "liftName": "DB Press",
+    "rm5": 0,
+    "description": "DB press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "17": {
+    "liftName": "DB Bench",
+    "rm5": 0,
+    "description": "DB bench description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "18": {
+    "liftName": "DB Rows",
+    "rm5": 0,
+    "description": "DB rows description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "19": {
+    "liftName": "DB Incline",
+    "rm5": 0,
+    "description": "DB incline description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "20": {
+    "liftName": "Tricep Pushdown",
+    "rm5": 0,
+    "description": "tricep pushdown description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "21": {
+    "liftName": "Face Pulls",
+    "rm5": 0,
+    "description": "face pulls description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "22": {
+    "liftName": "Seated Rows",
+    "rm5": 0,
+    "description": "seated rows description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "23": {
+    "liftName": "Wrist Curls",
+    "rm5": 0,
+    "description": "wrist curls description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "24": {
+    "liftName": "Shrugs",
+    "rm5": 0,
+    "description": "shrugs description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "25": {
+    "liftName": "Good Morning",
+    "rm5": 0,
+    "description": "good morning description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "26": {
+    "liftName": "Back Raises",
+    "rm5": 0,
+    "description": "back raises description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "27": {
+    "liftName": "Reverse Hypers",
+    "rm5": 0,
+    "description": "reverse hypers description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "28": {
+    "liftName": "Leg Curls",
+    "rm5": 0,
+    "description": "leg curls description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "29": {
+    "liftName": "Leg Extensions",
+    "rm5": 0,
+    "description": "leg extensions description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "30": {
+    "liftName": "Calf Raises",
+    "rm5": 0,
+    "description": "calf raises description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "31": {
+    "liftName": "Romainian Deadlifts",
+    "rm5": 0,
+    "description": "romainian deadlifts description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "32": {
+    "liftName": "Box Squats",
+    "rm5": 0,
+    "description": "box squats description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "33": {
+    "liftName": "Lunges",
+    "rm5": 0,
+    "description": "lunges description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "34": {
+    "liftName": "Crunches",
+    "rm5": 0,
+    "description": "crunches description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "35": {
+    "liftName": "Leg Raises",
+    "rm5": 0,
+    "description": "leg raises description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "36": {
+    "liftName": "Hack Squat",
+    "rm5": 0,
+    "description": "hack squat description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "37": {
+    "liftName": "Leg Press",
+    "rm5": 0,
+    "description": "leg press description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  },
+  "38": {
+    "liftName": "DB Side Bends",
+    "rm5": 0,
+    "description": "DB side bends description",
+    "uploadCount": 0,
+    "uploadAmmount": 5,
+    "exampleImage": "placeholder.png",
+    "trainingMaxRecord": 0
+  }
+}
 export const workouts: WorkoutType[] = [
   {
     id: '1',
