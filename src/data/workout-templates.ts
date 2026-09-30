@@ -23,7 +23,7 @@ export type RepSchemeByLiftType = {
   accessory: string[]
 } 
 
-export const WORKOUT_TEMPLATE_OPTIONS:TemplateOption[] = [
+export const WorkoutTemplates:TemplateOption[] = [
   { 
     id: 'ppl',
     name: 'PPL', 

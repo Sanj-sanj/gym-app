@@ -1,21 +1,32 @@
-export class WorkoutEntry implements WorkoutType2 {
-  liftName;
-  rm5;
-  description;
-  uploadCount;
-  uploadAmmount;
-  exampleImage;
-  trainingMaxRecord;
-  id;
-  constructor(id: number, enteredName: string, description: string, rm5: number, uploadCount:number, uploadAmmount: 5|10, exampleImage:string){
-    this.liftName = enteredName
+type WorkoutClass = {
+  liftName: string
+  rm5: number
+  description: string
+  uploadCount: number
+  uploadAmmount: 5 | 10
+  exampleImage: string
+  trainingMaxRecord: number
+  id: number
+  img: string
+}
+export class WorkoutEntry {
+  trainingMaxRecord: number = 0;
+  constructor(
+    public id: number,
+    public name: string,
+    public description: string,
+    public rm5: number, 
+    public uploadCount: number, 
+    public uploadAmmount: 5 | 10, 
+    public img: string
+  ){
+    this.name = name
     this.id = id
     this.description = description, 
     this.rm5 = rm5, 
+    this.img = img,
     this.uploadCount =uploadCount, 
-    this.exampleImage = exampleImage,
     this.uploadAmmount = uploadAmmount
-    this.trainingMaxRecord = 0
   }
 
   roundUpToFives(num: number) {
@@ -25,7 +36,7 @@ export class WorkoutEntry implements WorkoutType2 {
   initialTrainingMax(){
     return this.rm5 * 0.9
   }
-  Estimated1RM() {
+  est1RM() {
     return this.rm5 * this.uploadAmmount * 0.333 + this.rm5;
   }
   currentTrainingMax() {

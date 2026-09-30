@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { WORKOUT_TEMPLATE_OPTIONS, type TemplateOption } from '../data/workout-templates.ts';
-import { type WorkoutType, workouts } from '../data/workouts'
+import { WorkoutTemplates, type TemplateOption } from '../data/workout-templates.ts';
+import { type WorkoutBuilderType, workouts } from '../data/workouts'
 import WorkoutCard from './WorkoutCard.tsx';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
 import { isModalActive, userContext } from '../data/UserData.tsx';
@@ -9,10 +9,10 @@ import Modal from './Modal/Modal.tsx';
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
   const [workoutDay, setWorkoutDay] = useState<number[] | null>(null);
-  const [selectedLift, setSelectedLift] = useState<{id: string, appearance: number}| null>(null);
+  const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null);
 
   const existingUser = userContext.get().userName
-  const liftsBySelectedDay: WorkoutType[] = []
+  const liftsBySelectedDay: WorkoutBuilderType[] = []
 
   if(!existingUser) isModalActive.set(true); 
 
@@ -29,7 +29,7 @@ export default function NewExerciseTemplate() {
       !template ? (
         <div className="flex flex-wrap flex-col justify-center mt-6">
         {
-          WORKOUT_TEMPLATE_OPTIONS.map((opt) => (
+          WorkoutTemplates.map((opt) => (
             <button 
             key={opt.id}
             type="button" 
@@ -75,21 +75,21 @@ export default function NewExerciseTemplate() {
             selectedLift === null ?
             workoutDay.map((n) => {
             console.log('all')
-            const match = workouts.find((workout) => workout.id === n.toString())
+            const match = workouts.find((workout) => workout.id === n)
             match && liftsBySelectedDay.push(match)
             return match ? (
               <WorkoutCard 
               key={match.id} 
               workout={match} 
               isSelected={false} 
-              onSelect={(id:string) => setSelectedLift({id, appearance: workoutDay.indexOf(Number(id))})} 
+              onSelect={(id: number) => setSelectedLift({id, appearance: workoutDay.indexOf(Number(id))})} 
               />
             ) : <>No matching workouts</>
           })
             : (
               <WorkoutCard
               key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
-              workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutType}
+              workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutBuilderType}
               isSelected={true}
               repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
               onSelect={() => setSelectedLift(null)}

@@ -1,10 +1,15 @@
-import type { WorkoutType } from "../data/workouts";
+
+// import type { WorkoutType} from "../data/workouts";
+//this file needs the older workout type to display all the correct info
+
+import type { WorkoutBuilderType } from "../data/workouts";
+import { WorkoutEntry } from "../utils/createWorkout";
 
 export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: {
-  workout: WorkoutType,
+  workout: WorkoutEntry | WorkoutBuilderType,
   isSelected: boolean,
   repScheme?: {reps: string[], percents: number[]},
-  onSelect: (id: string) => void
+  onSelect: (id: number) => void
 }) {
   console.log(workout, repScheme)
   return (
@@ -17,13 +22,13 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
         {workout.name}
       </button>
 
-      {isSelected && (
+      {workout instanceof WorkoutEntry && isSelected ? (
         <>
           <div className="text-center mt-4 p-4 bg-white rounded shadow relative">
             <h3 className="text-xl font-bold">{workout.name}</h3>
 
-            <p>Current training max: {workout["current-training-max"]} lbs</p>
-            <p>Initial 5 rep max: {workout["5rm"]} lbs</p>
+            <p>Current training max: {workout.currentTrainingMax()} lbs</p>
+            <p>Initial 5 rep max: {workout.rm5} lbs</p>
             <h4 className="font-bold">Rep Scheme:</h4>
 
             <ol>
@@ -47,7 +52,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
       </button> 
         </div>
         </>
-      )}
+      ): null}
     </div>
 
   );
