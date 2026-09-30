@@ -22,15 +22,14 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
           <div className="text-center mt-4 p-4 bg-white rounded shadow relative">
             <h3 className="text-xl font-bold">{workout.name}</h3>
 
-
-            <p>Current training max: {workout["current-training-max"]}</p>
-            <p>Initial 5 rep max: {workout["5rm"]}</p>
+            <p>Current training max: {workout["current-training-max"]} lbs</p>
+            <p>Initial 5 rep max: {workout["5rm"]} lbs</p>
             <h4 className="font-bold">Rep Scheme:</h4>
 
             <ol>
             {repScheme?.reps.map((n,i)=> (
               <li key={i} className='grid grid-cols-3'>
-              <span className="text-left">Set {i+1}: {n}</span> <span>{repScheme.percents[i]}%</span> <span>{Math.round(Math.ceil(workout["current-training-max"] * (repScheme.percents[i] * .01) / 5)) * 5}</span>
+              <span className="text-left">Set {i+1}: {n}</span> <span>{repScheme.percents[i]}%</span> <span>{Math.round(Math.ceil(workout["current-training-max"] * (repScheme.percents[i] * .01) / 5)) * 5} lbs</span>
               </li>
             ))
             } 
