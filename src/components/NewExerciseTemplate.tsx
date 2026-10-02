@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { WorkoutTemplates, type TemplateOption } from '../data/workout-templates.ts';
+import { useState, useEffect } from 'react';
+import { WorkoutTemplates, type TemplateDates, type TemplateOption, type WorkoutProgramming } from '../data/workout-templates.ts';
 import { type WorkoutBuilderType, workouts } from '../data/workouts'
 import WorkoutCard from './WorkoutCard.tsx';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
@@ -8,12 +8,23 @@ import Modal from './Modal/Modal.tsx';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
-  const [workoutDay, setWorkoutDay] = useState<number[] | null>(null);
+  const [workoutIDByDay, setWorkoutIDByDay] = useState<number[] | null>(null);
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null);
+  const [edited, setEdited] = useState<Partial<Record<TemplateDates, boolean >> | null>(null)
 
-  const existingUser = userContext.get().userName
+  const currDayEdit:  Partial<Record<TemplateDates, boolean >> = {}
   const liftsBySelectedDay: WorkoutBuilderType[] = []
 
+  const existingUser = userContext.get().userName
+
+  useEffect(() => {
+    console.log('outer') 
+    console.log(edited)
+    if(template?.programming && Object.keys(currDayEdit).length === Object.keys(template?.programming).length) {
+      console.log('inner') 
+      console.log(currDayEdit)
+    }
+  }, [currDayEdit])
   if(!existingUser) isModalActive.set(true); 
 
   function userSelectProgram(opt: TemplateOption) {
@@ -21,8 +32,15 @@ export default function NewExerciseTemplate() {
     userContext.setKey('userTemplateInProgress', opt.id)
     userContext.setKey('lastDayAttempt', 'day1')
     userContext.setKey('lastWeekAttempt', 'w1')
+    console.log(opt)
   }
-  const toggleEditView = () => isModalActive.set(true)
+
+  const toggleEditView = (day: TemplateDates, exerciseByID: number[]) => {
+    setWorkoutIDByDay(exerciseByID)
+    userContext.setKey('modal',{active: true, entry: "edit lifts", styleFunc: () => setEdited({...edited, [day]: true})})
+    isModalActive.set(true) 
+  }
+
   return (
     <>
     {
@@ -34,7 +52,7 @@ export default function NewExerciseTemplate() {
             key={opt.id}
             type="button" 
             onClick={() => userSelectProgram(opt)}
-            className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 my-1 rounded bg-indigo-600 text-white  hover:bg-indigo-700 transition-colors"
             >
             {opt.name}
             </button>
@@ -42,71 +60,69 @@ export default function NewExerciseTemplate() {
         }
         </div>
       ) :
-        template && !workoutDay ? (
+        template && !workoutIDByDay ? (
           <>
           <h2 className="text-xl font-semibold mb-4 text-center">
-          {template.name} 
+            {template.name} 
           </h2>
           {
-            Object.values(template.programming).map((opt) => (
-              <button 
-              key={opt.name}
-              type="button" 
-              onClick={() => setWorkoutDay(opt.exercise_id)}
-              className="px-4 py-2 my-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
-              >
-              {opt.name}
-              </button>
-            ))
-          }
+            Object.entries(template.programming).map(([key, opt]) => {
+              if(key) currDayEdit[key as TemplateDates] = false
+              return (
+                <button 
+                key={opt.name}
+                type="button" 
+                onClick={() => toggleEditView(key as TemplateDates, opt.exercise_id)}
+                className={`px-4 py-2 my-1 ${edited?.[key as TemplateDates] === true ? "bg-green-600 text-white hover:bg-green-700": "bg-indigo-600 text-white hover:bg-indigo-700"} rounded transition-colors`}
+                >
+                {opt.name}
+                </button>
+              )
+            })
+          } 
           <button onClick={() => setTemplate(null)} className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-          Template
-          </button> 
-          </>
-      ) :  
-        template && workoutDay ? (
-          <>
-          <h2 className="text-xl font-semibold mb-4 text-center absolute top-1/12">
-          {template.name} 
-          </h2>
+          Template 
+          </button>
+          </> ) :  
+          template && workoutIDByDay ? (
+            <> 
+            <h2 className="text-xl font-semibold mb-4 text-center absolute top-1/12"> 
+              {template.name} 
+            </h2>
 
-          <div className="flex flex-col flex-wrap w-full items-center mt-8">
-          {workoutDay.length ?
-            selectedLift === null ?
-            workoutDay.map((n) => {
-            console.log('all')
-            const match = workouts.find((workout) => workout.id === n)
-            match && liftsBySelectedDay.push(match)
-            return match ? (
-              <WorkoutCard 
-              key={match.id} 
-              workout={match} 
-              isSelected={false} 
-              onSelect={(id: number) => setSelectedLift({id, appearance: workoutDay.indexOf(Number(id))})} 
-              />
-            ) : <>No matching workouts</>
-          })
-            : (
-              <WorkoutCard
-              key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
-              workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutBuilderType}
-              isSelected={true}
-              repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
-              onSelect={() => setSelectedLift(null)}
-              /> 
-            ) : <div> no workouts prepared </div> 
-          }
-          </div>
-          { selectedLift === null ? (
-            <>
-              <button onClick={() => toggleEditView()}
-              className="scale-150 absolute right-6 bottom-6 hover:bg-green-500 bg-green-600 outline-emerald-300 outline-3 rounded-3xl min-w-9 min-h-9 p-1" title="Modify lift">✏️</button> 
-              <button onClick={() => setWorkoutDay(null)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-                Days
-              </button> 
-            </>
-          ) : null
-          }
+            <div className="flex flex-col flex-wrap w-full items-center mt-8">
+              {workoutIDByDay.length ?
+                selectedLift === null ?
+                workoutIDByDay.map((n) => {
+                const match = workouts.find((workout) => workout.id === n)
+                match && liftsBySelectedDay.push(match)
+                return match ? (
+                  <WorkoutCard 
+                  key={match.id} 
+                  workout={match} 
+                  isSelected={false} 
+                  onSelect={(id: number) => setSelectedLift({id, appearance: workoutIDByDay.indexOf(Number(id))})} 
+                  />
+                ) : <>No matching workouts</>
+              })
+                : (
+                  <WorkoutCard
+                  key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
+                  workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutBuilderType}
+                  isSelected={true}
+                  repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
+                  onSelect={() => setSelectedLift(null)}
+                  /> 
+                ) : <div> no workouts prepared </div> 
+              }
+            </div>
+            {selectedLift === null ? (
+              <>
+                <button onClick={() => setWorkoutIDByDay(null)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+                  Days
+                </button> 
+              </>
+            ) : null }
           </>
       ) : <></>
     }
@@ -117,4 +133,5 @@ export default function NewExerciseTemplate() {
     </>
   )
 }
+
 

@@ -5,11 +5,21 @@ import type { WorkoutBuilderType } from "../../data/workouts"
 import { ModalNewUser } from "./ModalNewUser"
 import  ModalEditLifts  from "./ModalEditLifts"
 
-export default function Modal({useCase, workouts}: {useCase: 'new user' | 'edit lift', workouts?: WorkoutBuilderType[] | null}) {  
+export default function Modal({
+  useCase, 
+  workouts, 
+} : {
+  useCase: 'new user', 
+  workouts?: undefined,
+} |
+{
+  useCase: | 'edit lift', 
+  workouts: WorkoutBuilderType[] | null,
+}
+) {  
   const $isModalActive = useStore(isModalActive)
   const nameInputRef = useRef<HTMLInputElement | null>(null)
   const [liftWeight, setLiftWeight] = useState<Record<string,{'5rm': string, uploadCount: number} >>({});
-
   const closeModal = () => isModalActive.set(!$isModalActive)
 
   return $isModalActive ? (
@@ -18,7 +28,7 @@ export default function Modal({useCase, workouts}: {useCase: 'new user' | 'edit 
         {
           useCase === 'new user' ?
           ModalNewUser(nameInputRef, closeModal) : 
-          useCase === 'edit lift' ?
+          useCase === 'edit lift' ? 
           ModalEditLifts(workouts as WorkoutBuilderType[], closeModal, {liftWeight, setLiftWeight}) :
           <>someother cased</>
         }

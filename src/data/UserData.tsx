@@ -6,7 +6,8 @@ export type AppContext = {
   lastWeekAttempt: TemplateProgramWeeks | null,
   lastDayAttempt: TemplateDates | null,
   userTemplateInProgress: TemplatePrograms | null,
-  workoutInProgress: boolean
+  workoutInProgress: boolean,
+  modal: {active: boolean, entry: "edit lifts" | 'new user' | null, styleFunc: null | (() => void) },
   archivedPrograms: {
     [T in TemplatePrograms]: {
       daysCompleted: number,
@@ -28,6 +29,8 @@ const Initial: AppContext = {
   lastWeekAttempt: null,
   lastDayAttempt: null,
   userTemplateInProgress: null,
+  workoutInProgress: false,
+  modal: {active: false, entry: null, styleFunc: null },
   archivedPrograms: {
     ppl: {
       daysCompleted: 0,
@@ -67,7 +70,6 @@ const Initial: AppContext = {
       excersises: [[4,8,9,10,14],[4,8,9,10,14],[4,8,9,10,14]]
     },
   },
-  workoutInProgress: false,
 }
 export const userContext = map(Initial)
 export const isModalActive = atom(false)
