@@ -3,11 +3,6 @@ export type TemplateNames = 'PPL' | '5/3/1' | 'Full Body';
 export type TemplateDates = 'day1' | 'day2' | 'day3' | 'day4' | 'day5' | 'day6';
 export type TemplateProgramWeeks = 'w1' | 'w2' | 'w3' | 'w4';
 export type TemplateByDay = Partial<Record<TemplateDates ,{ name: string, exercise_id: number[], hasUserEdit: boolean  }>>;
-export type WorkoutProgramming = {
-  name: string;
-  exercise_id: number[];
-  hasUserEdit: boolean;
-}
 
 export type TemplateOption= { 
   id: TemplatePrograms; 

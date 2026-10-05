@@ -11,7 +11,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
   repScheme?: {reps: string[], percents: number[]},
   onSelect: (id: number) => void
 }) {
-  console.log(workout, repScheme)
+ // console.log(workout, repScheme)
   return (
     <div className={`transition-all duration-300 delay-700 ${isSelected ? 'w-10/12 sm:w-96 mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button

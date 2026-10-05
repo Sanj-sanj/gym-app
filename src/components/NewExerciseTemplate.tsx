@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { WorkoutTemplates, type TemplateDates, type TemplateOption, type WorkoutProgramming } from '../data/workout-templates.ts';
+import { useState, useEffect, useRef } from 'react';
+import { WorkoutTemplates, type TemplateDates, type TemplateOption } from '../data/workout-templates.ts';
 import { type WorkoutBuilderType, workouts } from '../data/workouts'
 import WorkoutCard from './WorkoutCard.tsx';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
@@ -11,21 +11,26 @@ export default function NewExerciseTemplate() {
   const [workoutIDByDay, setWorkoutIDByDay] = useState<number[] | null>(null);
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null);
   const [edited, setEdited] = useState<Partial<Record<TemplateDates, boolean >> | null>(null)
+  const isUserDoneEditing = useRef(false)
 
-  const currDayEdit:  Partial<Record<TemplateDates, boolean >> = {}
+  const editableDays:  Partial<Record<TemplateDates, boolean >> = {}
   const liftsBySelectedDay: WorkoutBuilderType[] = []
-
   const existingUser = userContext.get().userName
+
+  if(!existingUser) isModalActive.set(true)
 
   useEffect(() => {
     console.log('outer') 
     console.log(edited)
-    if(template?.programming && Object.keys(currDayEdit).length === Object.keys(template?.programming).length) {
+    if(edited && template && Object.keys(edited).length === Object.keys(template?.programming).length) {
+      setEdited({...editableDays, ...edited})
       console.log('inner') 
-      console.log(currDayEdit)
+      console.log(editableDays)
+      if(Object.values(edited).every(v => v === true)) {
+        isUserDoneEditing.current = true
+      }
     }
-  }, [currDayEdit])
-  if(!existingUser) isModalActive.set(true); 
+  }, [workoutIDByDay])
 
   function userSelectProgram(opt: TemplateOption) {
     setTemplate(opt)
@@ -37,7 +42,7 @@ export default function NewExerciseTemplate() {
 
   const toggleEditView = (day: TemplateDates, exerciseByID: number[]) => {
     setWorkoutIDByDay(exerciseByID)
-    userContext.setKey('modal',{active: true, entry: "edit lifts", styleFunc: () => setEdited({...edited, [day]: true})})
+    userContext.setKey('modal',{activeDay: day, entry: "edit lift", styleFunc: () => setEdited({...edited, [day]: true})})
     isModalActive.set(true) 
   }
 
@@ -67,7 +72,7 @@ export default function NewExerciseTemplate() {
           </h2>
           {
             Object.entries(template.programming).map(([key, opt]) => {
-              if(key) currDayEdit[key as TemplateDates] = false
+              if(key) editableDays[key as TemplateDates] = false
               return (
                 <button 
                 key={opt.name}
@@ -80,7 +85,7 @@ export default function NewExerciseTemplate() {
               )
             })
           } 
-          <button onClick={() => setTemplate(null)} className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+          <button onClick={() => {setTemplate(null); setEdited(null)}} className='px-4 py-2 border border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
           Template 
           </button>
           </> ) :  
@@ -126,9 +131,14 @@ export default function NewExerciseTemplate() {
           </>
       ) : <></>
     }
-    <button onClick={() => console.log(template)}>someshit</button>
+    <button onClick={() => console.log(userContext.value)}>someshit</button>
+    {
+      isUserDoneEditing.current === true ?
+      <button className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors' onClick={console.log}>
+        Save
+      </button> : null
+    }
     {!existingUser ? <Modal useCase='new user'/> : null}
-    {isModalActive && existingUser ? console.log(liftsBySelectedDay): null}
     {isModalActive && existingUser ? <Modal useCase="edit lift" workouts={liftsBySelectedDay} /> : null}
     </>
   )

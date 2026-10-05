@@ -1,7 +1,7 @@
 export type WorkoutBuilderType = {
     id: number,
     name: string,
-    uploadAmmount: number,
+    uploadAmmount: 5 | 10,
     description: string,
     img: string
   };

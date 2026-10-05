@@ -2,7 +2,7 @@ type WorkoutClass = {
   liftName: string
   rm5: number
   description: string
-  uploadCount: number
+  upcycle: number
   uploadAmmount: 5 | 10
   exampleImage: string
   trainingMaxRecord: number
@@ -16,7 +16,7 @@ export class WorkoutEntry {
     public name: string,
     public description: string,
     public rm5: number, 
-    public uploadCount: number, 
+    public upcycle: number, 
     public uploadAmmount: 5 | 10, 
     public img: string
   ){
@@ -25,7 +25,7 @@ export class WorkoutEntry {
     this.description = description, 
     this.rm5 = rm5, 
     this.img = img,
-    this.uploadCount =uploadCount, 
+    this.upcycle =upcycle, 
     this.uploadAmmount = uploadAmmount
   }
 
@@ -40,7 +40,7 @@ export class WorkoutEntry {
     return this.rm5 * this.uploadAmmount * 0.333 + this.rm5;
   }
   currentTrainingMax() {
-    return this.initialTrainingMax() + this.uploadAmmount * this.uploadCount;
+    return this.initialTrainingMax() + this.uploadAmmount * this.upcycle;
   }
 }
 
