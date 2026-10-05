@@ -31,7 +31,7 @@ const Initial: AppContext = {
   lastWeekAttempt: null,
   lastDayAttempt: null,
   userTemplateInProgress: null,
-  modal: { activeDay: 'day1', entry: null, styleFunc: null },
+  modal: { activeDay: null, entry: null, styleFunc: null },
   userWorkoutEntries: {},
   archivedPrograms: {
     ppl: {

@@ -11,7 +11,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
   repScheme?: {reps: string[], percents: number[]},
   onSelect: (id: number) => void
 }) {
- // console.log(workout, repScheme)
+  console.log(workout, repScheme)
   return (
     <div className={`transition-all duration-300 delay-700 ${isSelected ? 'w-10/12 sm:w-96 mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button
@@ -34,13 +34,13 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
             <ol>
             {repScheme?.reps.map((n,i)=> (
               <li key={i} className='grid grid-cols-3'>
-              <span className="text-left">Set {i+1}: {n}</span> <span>{repScheme.percents[i]}%</span> <span>{Math.round(Math.ceil(workout["current-training-max"] * (repScheme.percents[i] * .01) / 5)) * 5} lbs</span>
+              <span className="text-left">Set {i+1}: {n}</span> <span>{repScheme.percents[i]}%</span> <span>{Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs</span>
               </li>
             ))
             } 
             </ol>
             <img
-              src={workout.image}
+              src={workout.img}
               alt={workout.name + ' img'}
               className="w-full h-48 object-cover rounded mt-2"
             />

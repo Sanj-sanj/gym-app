@@ -10,3 +10,14 @@ import Button from '../components/Button.astro';
       <Button href="/" variant="outline" title="Start over" innerText='Start over' />
   </div>
 </Layout>
+
+<script>
+  import { userContext } from "../data/UserData"
+
+  const saved = localStorage.getItem('userContext')
+  if(saved) {
+    userContext.set(JSON.parse(saved))
+    console.log(userContext)
+    console.log('loaded from storage')
+  }
+</script>

@@ -1,8 +1,10 @@
 import type { RefObject } from "react"
-import { userContext } from "../../data/UserData"
+import { isModalActive, userContext } from "../../data/UserData"
 
 export function ModalNewUser(ref:RefObject<HTMLInputElement | null>, unmount: () => void) {
 
+  console.log('ModalNewUser',  isModalActive.value)
+  console.log(ref)
   function handleNameConfirmation() {
     if(ref.current && !ref.current.value){ 
       ref.current.placeholder = "Pick a name"
@@ -10,6 +12,7 @@ export function ModalNewUser(ref:RefObject<HTMLInputElement | null>, unmount: ()
     }
     else if(ref.current) {
       userContext.setKey('userName', ref.current.value)
+      localStorage.setItem('userContext', JSON.stringify(userContext.value))
       unmount()
     }
   }

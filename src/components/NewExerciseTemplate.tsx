@@ -5,6 +5,7 @@ import WorkoutCard from './WorkoutCard.tsx';
 import repSchemeSolver from '../utils/repSchemeDecypher.ts';
 import { isModalActive, userContext } from '../data/UserData.tsx';
 import Modal from './Modal/Modal.tsx';
+import { WorkoutEntry } from '../utils/createWorkout.ts';
 
 export default function NewExerciseTemplate() {
   const [template, setTemplate] = useState<TemplateOption | null>(null);
@@ -17,8 +18,7 @@ export default function NewExerciseTemplate() {
   const liftsBySelectedDay: WorkoutBuilderType[] = []
   const existingUser = userContext.get().userName
 
-  if(!existingUser) isModalActive.set(true)
-
+    console.log('1', userContext.value)
   useEffect(() => {
     console.log('outer') 
     console.log(edited)
@@ -44,6 +44,19 @@ export default function NewExerciseTemplate() {
     setWorkoutIDByDay(exerciseByID)
     userContext.setKey('modal',{activeDay: day, entry: "edit lift", styleFunc: () => setEdited({...edited, [day]: true})})
     isModalActive.set(true) 
+  }
+  function saveUserContext() {
+    const saveable = JSON.stringify(userContext.value)
+    console.log(saveable)
+    localStorage.setItem('userContext', saveable)
+  }
+
+  const constructWorkout = (lift: typeof selectedLift ) => {
+    if(!lift) return
+      const entries = userContext.get().userWorkoutEntries
+      const {id, description, name, uploadAmmount, img } = workouts.find((w) => w.id === lift.id) as WorkoutBuilderType 
+      const match = entries[id]
+      return new WorkoutEntry(id, name, description, match['5rm'],match.upcycle, uploadAmmount, img )
   }
 
   return (
@@ -113,7 +126,7 @@ export default function NewExerciseTemplate() {
                 : (
                   <WorkoutCard
                   key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
-                  workout={workouts.find((w) => w.id === selectedLift.id) as WorkoutBuilderType}
+                  workout={constructWorkout(selectedLift) as WorkoutEntry}
                   isSelected={true}
                   repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
                   onSelect={() => setSelectedLift(null)}
@@ -134,11 +147,13 @@ export default function NewExerciseTemplate() {
     <button onClick={() => console.log(userContext.value)}>someshit</button>
     {
       isUserDoneEditing.current === true ?
-      <button className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors' onClick={console.log}>
+      <button 
+        onClick={saveUserContext}
+        className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'
+      >
         Save
       </button> : null
     }
-    {!existingUser ? <Modal useCase='new user'/> : null}
     {isModalActive && existingUser ? <Modal useCase="edit lift" workouts={liftsBySelectedDay} /> : null}
     </>
   )
