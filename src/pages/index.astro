@@ -1,15 +1,15 @@
 ---
 import Modal from '../components/Modal/Modal';
 import Layout from '../layouts/Layout.astro';
-import { userContext, isModalActive } from '../data/UserData';
-
-  const user = userContext.get().userName
 ---
 
 <Layout>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 py-8">
+  <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-8">
+    <div>
+      <span class='welcome'></span>
+    </div>
     <div id='body' class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-      <a href="/" class="px-6 py-3 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200">Start Workout</a>
+      <a href="/continue-workout" class="px-6 py-3 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200">Start Workout</a>
       <a href="/new-workout" class="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 transition-colors duration-200">New Workout</a>
       <a href="/gym-log" class="px-6 py-3 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors duration-200">Gym Log</a>
       <Modal client:load useCase='new user'/>
@@ -20,14 +20,12 @@ import { userContext, isModalActive } from '../data/UserData';
 <script>
 import { userContext, isModalActive } from "../data/UserData"
   const saved = localStorage.getItem('userContext')
-  console.log('this',isModalActive.value)
   if(saved) {
+    let welcomeElement = document.querySelector('.welcome')
     userContext.set(JSON.parse(saved))
-    console.log(userContext)
-    console.log('loaded from storage')
     isModalActive.set(false)
+    if(welcomeElement) welcomeElement.innerHTML = "Welcome " + userContext.get().userName as string
   } else {
-    console.log('hjere')
     isModalActive.set(true)
   }
 

@@ -13,11 +13,10 @@ import Button from '../components/Button.astro';
 
 <script>
   import { userContext } from "../data/UserData"
-
   const saved = localStorage.getItem('userContext')
   if(saved) {
     userContext.set(JSON.parse(saved))
-    console.log(userContext)
-    console.log('loaded from storage')
+  } else {
+    document.location.replace('/')
   }
 </script>

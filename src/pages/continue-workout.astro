@@ -1,0 +1,24 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ContinueWorkout  from '../components/ContinueWorkoutTemplate.tsx'
+---
+
+<Layout>
+  <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-8">
+    <div id='body' class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+      <ContinueWorkout client:load/>
+
+      some stuff
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { userContext } from "../data/UserData"
+  const saved = localStorage.getItem('userContext')
+  if(saved) {
+    userContext.set(JSON.parse(saved))
+  } else {
+    document.location.replace('/')
+  }
+</script>

@@ -17,7 +17,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
       <button
         title="Click/tap to preview"
         onClick={!isSelected ? () => onSelect(workout.id) : () => {}}
-        className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+        className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
       >
         {workout.name}
       </button>

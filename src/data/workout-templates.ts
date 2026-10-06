@@ -9,7 +9,7 @@ export type TemplateOption= {
   name: TemplateNames, 
   repScheme: RepSchemeByLiftType
   programming: TemplateByDay
-  modifiers?: { 
+  modifiers: { 
     [key in TemplateProgramWeeks]: {
       tier1: number[],
       tier2: number[],
@@ -49,7 +49,29 @@ export const WorkoutTemplates:TemplateOption[] = [
       'day4':{ name: 'Push day 2', exercise_id: [0,0,0,0,0], hasUserEdit: false },
       'day5':{ name: 'Pull day 2', exercise_id: [0,0,0,0,0], hasUserEdit: false },
       'day6':{ name: 'Legs day 2', exercise_id: [0,0,0,0,0], hasUserEdit: false },
-    } 
+    },
+    modifiers: {
+        w1: {
+          tier1: [40, 50, 60, 65, 75, 85],
+          tier2: [40, 50, 60, 50, 60, 70],
+          accessory: [50,50,50,50,50],
+        },
+        w2: {
+          tier1: [40, 50, 60, 70, 80, 90],
+          tier2: [40, 50, 60, 60, 70, 80],
+          accessory: [50,50,50,50,50],
+        },
+        w3: {
+          tier1: [40, 50, 60, 75, 85, 95],
+          tier2: [40, 50, 60, 65, 75, 85],
+          accessory: [50,50,50,50,50],
+        },
+        w4: {
+          tier1: [40, 50, 60, 40, 50, 60],
+          tier2: [40, 50, 60, 40, 50, 60],
+          accessory: [50,50,50,50,50],
+        }
+      },
   },
   { 
     id: '531',
@@ -76,27 +98,27 @@ export const WorkoutTemplates:TemplateOption[] = [
       'day4':{ name: 'Lower 2', exercise_id: [1,6,28,29,31], hasUserEdit: false},
     },
     modifiers: {
-        w1: {
-          tier1: [40, 50, 60, 65, 75, 85],
-          tier2: [40, 50, 60, 50, 60, 70],
-          accessory: [50,50,50,50,50],
-        },
-        w2: {
-          tier1: [40, 50, 60, 70, 80, 90],
-          tier2: [40, 50, 60, 60, 70, 80],
-          accessory: [50,50,50,50,50],
-        },
-        w3: {
-          tier1: [40, 50, 60, 75, 85, 95],
-          tier2: [40, 50, 60, 65, 75, 85],
-          accessory: [50,50,50,50,50],
-        },
-        w4: {
-          tier1: [40, 50, 60, 40, 50, 60],
-          tier2: [40, 50, 60, 40, 50, 60],
-          accessory: [50,50,50,50,50],
-        }
+      w1: {
+        tier1: [40, 50, 60, 65, 75, 85],
+        tier2: [40, 50, 60, 50, 60, 70],
+        accessory: [50,50,50,50,50],
+      },
+      w2: {
+        tier1: [40, 50, 60, 70, 80, 90],
+        tier2: [40, 50, 60, 60, 70, 80],
+        accessory: [50,50,50,50,50],
+      },
+      w3: {
+        tier1: [40, 50, 60, 75, 85, 95],
+        tier2: [40, 50, 60, 65, 75, 85],
+        accessory: [50,50,50,50,50],
+      },
+      w4: {
+        tier1: [40, 50, 60, 40, 50, 60],
+        tier2: [40, 50, 60, 40, 50, 60],
+        accessory: [50,50,50,50,50],
       }
+    }
   },
   { 
     id: 'fullbody',
@@ -120,6 +142,28 @@ export const WorkoutTemplates:TemplateOption[] = [
       'day1': {name: 'day 1', exercise_id: [0,0,0,0,0], hasUserEdit: false},
       'day2': {name: 'day 2', exercise_id: [0,0,0,0,0], hasUserEdit: false},
       'day3': {name: 'day 3', exercise_id: [0,0,0,0,0], hasUserEdit: false},
-    }
+    },
+    modifiers: {
+      w1: {
+        tier1: [40, 50, 60, 65, 75, 85],
+        tier2: [40, 50, 60, 50, 60, 70],
+        accessory: [50,50,50,50,50],
+      },
+      w2: {
+        tier1: [40, 50, 60, 70, 80, 90],
+        tier2: [40, 50, 60, 60, 70, 80],
+        accessory: [50,50,50,50,50],
+      },
+      w3: {
+        tier1: [40, 50, 60, 75, 85, 95],
+        tier2: [40, 50, 60, 65, 75, 85],
+        accessory: [50,50,50,50,50],
+      },
+      w4: {
+        tier1: [40, 50, 60, 40, 50, 60],
+        tier2: [40, 50, 60, 40, 50, 60],
+        accessory: [50,50,50,50,50],
+      }
+    },
   }
 ];

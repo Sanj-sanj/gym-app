@@ -128,7 +128,7 @@ export default function NewExerciseTemplate() {
                   key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
                   workout={constructWorkout(selectedLift) as WorkoutEntry}
                   isSelected={true}
-                  repScheme={repSchemeSolver(template, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
+                  repScheme={repSchemeSolver({modifiers:template.modifiers},{repScheme:template.repScheme}, selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
                   onSelect={() => setSelectedLift(null)}
                   /> 
                 ) : <div> no workouts prepared </div> 
