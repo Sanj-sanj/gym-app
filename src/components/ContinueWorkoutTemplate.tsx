@@ -2,7 +2,7 @@ import { userContext } from "../data/UserData"
 import { WorkoutTemplates, type TemplateDates } from "../data/workout-templates"
 import WorkoutCard from "./WorkoutCard"
 import { WorkoutEntry } from "../utils/createWorkout"
-import { workouts } from "../data/workouts"
+import { workouts, type WorkoutBuilderType } from "../data/workouts"
 import { useState } from "react"
 import repSchemeSolver from "../utils/repSchemeDecypher"
 
@@ -12,8 +12,8 @@ export default function ContinueWorkout() {
   const day = userContext.get().lastDayAttempt
   const program = WorkoutTemplates.find(template => template.id === activeProgram)
 
-  if(!program) return <>No results currently</>
-  const currentSession = program.programming[day as TemplateDates]
+
+  const currentSession = program?.programming[day as TemplateDates]
 
   const constructWorkout = (lift: typeof selectedLift ) => {
     if(!lift) return
@@ -27,30 +27,37 @@ export default function ContinueWorkout() {
   console.log(program)
 
   return (
-    <div className="flex flex-wrap flex-col justify-center mt-6">
-    <h2>{program.name} | {day}</h2>
-    {
-      selectedLift === null ? currentSession?.exercise_id.map(n => {
-        const match = workouts.find((workout) => workout.id === n)
-        return match ? (
-          <WorkoutCard 
-          key={match.id} 
-          workout={match} 
-          isSelected={false} 
-          onSelect={(id: number) => setSelectedLift({id, appearance: currentSession.exercise_id.indexOf(Number(id))})} 
-          />
-        ) : null;
-      }) : (
-        <WorkoutCard
-        key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
-        workout={constructWorkout(selectedLift) as WorkoutEntry}
-        isSelected={true}
-        repScheme={repSchemeSolver({modifiers:program.modifiers},{repScheme:program.repScheme},  selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
-        onSelect={() => setSelectedLift(null)}
-        /> 
-      )
+    <>
+    {program ? (
+      <>
+        <h2>{program.name} | {day}</h2>
+        <div className="flex flex-col flex-wrap w-full items-center mt-8">
+          {
+            selectedLift === null ? currentSession?.exercise_id.map(n => {
+              const match = workouts.find((workout) => workout.id === n)
+              return match ? (
+                <WorkoutCard 
+                key={match.id} 
+                workout={match} 
+                isSelected={false} 
+                onSelect={(id: number) => setSelectedLift({id, appearance: currentSession.exercise_id.indexOf(Number(id))})} 
+                />
+              ) : <>no matching workouts</>;
+            }) : (
+            <WorkoutCard
+            key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
+            workout={constructWorkout(selectedLift) as WorkoutEntry}
+            isSelected={true}
+            repScheme={repSchemeSolver({modifiers:program.modifiers},{repScheme:program.repScheme},  selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
+            onSelect={() => setSelectedLift(null)}
+            /> 
+            )
+          }
+        </div>
+    </> ) :
+    <>no program</>
     }
     <button onClick={() => console.log(userContext.value)}>debug</button>
-    </div>
+    </>
   )
 }

@@ -34,7 +34,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
             <ol>
             {repScheme?.reps.map((n,i)=> (
               <li key={i} className='grid grid-cols-3'>
-              <span className="text-left">Set {i+1}: {n}</span> <span>{repScheme.percents[i]}%</span> <span>{Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs</span>
+              <span className="text-left">Set {i+1}: {n} reps</span> <span>{repScheme.percents[i]}%</span> <span>{Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs</span>
               </li>
             ))
             } 
