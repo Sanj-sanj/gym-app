@@ -5,19 +5,23 @@ import { WorkoutEntry } from "../utils/createWorkout"
 import { workouts, type WorkoutBuilderType } from "../data/workouts"
 import { useState } from "react"
 import repSchemeSolver from "../utils/repSchemeDecypher"
+import ProgressBar from "./ProgressBar"
 
 export default function ContinueWorkout() {
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
   const activeProgram = userContext.get().userTemplateInProgress
   const day = userContext.get().lastDayAttempt
+  const entries = userContext.get().userWorkoutEntries
   const program = WorkoutTemplates.find(template => template.id === activeProgram)
 
+  if(!program) return <>no program found</>
 
-  const currentSession = program?.programming[day as TemplateDates]
+  const currentSession = program.programming[day as TemplateDates]
+  const [progress, setProgress] = useState(Object.values(currentSession?.exercise_id || []).reduce((acc,curr) => ({...acc, [curr]: false}),{})) 
+  console.log(progress)
 
   const constructWorkout = (lift: typeof selectedLift ) => {
     if(!lift) return
-      const entries = userContext.get().userWorkoutEntries
       const {id, description, name, uploadAmmount, img } = workouts.find((w) => w.id === lift.id) as WorkoutBuilderType 
       const match = entries[id]
       return new WorkoutEntry(id, name, description, match['5rm'],match.upcycle, uploadAmmount, img )
@@ -28,8 +32,6 @@ export default function ContinueWorkout() {
 
   return (
     <>
-    {program ? (
-      <>
         <h2>{program.name} | {day}</h2>
         <div className="flex flex-col flex-wrap w-full items-center mt-8">
           {
@@ -53,10 +55,8 @@ export default function ContinueWorkout() {
             /> 
             )
           }
+          <ProgressBar />
         </div>
-    </> ) :
-    <>no program</>
-    }
     <button onClick={() => console.log(userContext.value)}>debug</button>
     </>
   )
