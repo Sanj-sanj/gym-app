@@ -10,14 +10,23 @@ import ProgressBar from "./ProgressBar"
 export default function ContinueWorkout() {
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
   const activeProgram = userContext.get().userTemplateInProgress
+  const week = userContext.get().lastWeekAttempt
   const day = userContext.get().lastDayAttempt
   const entries = userContext.get().userWorkoutEntries
   const program = WorkoutTemplates.find(template => template.id === activeProgram)
+  
 
   if(!program) return <>no program found</>
 
+    const appearanceToTier = (appear: number) => {return appear === 0 ? 'tier1' : appear === 1 ? 'tier2' : 'accessory'}
+const appearance = () => appearanceToTier(selectedLift?.appearance || 0)
   const currentSession = program.programming[day as TemplateDates]
-  const [progress, setProgress] = useState(Object.values(currentSession?.exercise_id || []).reduce((acc,curr) => ({...acc, [curr]: false}),{})) 
+  const [progress, setProgress] = useState(
+    Object.values(currentSession?.exercise_id || [])
+    .reduce((acc,curr) => (
+      {...acc, [curr]: {...program.repScheme[appearance()][week]}}
+    ),{})) 
+    
   console.log(progress)
 
   const constructWorkout = (lift: typeof selectedLift ) => {
