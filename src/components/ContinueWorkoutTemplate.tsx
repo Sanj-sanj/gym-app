@@ -35,9 +35,10 @@ const appearance = () => appearanceToTier(selectedLift?.appearance || 0)
       const match = entries[id]
       return new WorkoutEntry(id, name, description, match['5rm'],match.upcycle, uploadAmmount, img )
   }
-
+  console.log(activeProgram)
   console.log(currentSession)
   console.log(program)
+
 
   return (
     <>
