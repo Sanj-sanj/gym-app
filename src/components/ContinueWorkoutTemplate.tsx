@@ -3,9 +3,10 @@ import { WorkoutTemplates, type TemplateDates } from "../data/workout-templates"
 import WorkoutCard from "./WorkoutCard"
 import { WorkoutEntry } from "../utils/createWorkout"
 import { workouts, type WorkoutBuilderType } from "../data/workouts"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import repSchemeSolver from "../utils/repSchemeDecypher"
 import ProgressBar from "./ProgressBar"
+import { Timer } from "./Timer"
 
 export default function ContinueWorkout() {
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
@@ -15,20 +16,22 @@ export default function ContinueWorkout() {
   const entries = userContext.get().userWorkoutEntries
   const program = WorkoutTemplates.find(template => template.id === activeProgram)
   
+  if(!program || !week) return <>no program found</>
 
-  if(!program) return <>no program found</>
-
-    const appearanceToTier = (appear: number) => {return appear === 0 ? 'tier1' : appear === 1 ? 'tier2' : 'accessory'}
-const appearance = () => appearanceToTier(selectedLift?.appearance || 0)
   const currentSession = program.programming[day as TemplateDates]
-  const [progress, setProgress] = useState(
+  const appearanceToTier = (appear: number) => {return appear === 0 ? 'tier1' : appear === 1 ? 'tier2' : 'accessory'}
+  const appearance = () => appearanceToTier(selectedLift?.appearance || 0)
+  const [timerStart, setTimerStart] = useState<Date | null>(null)
+
+  const [progress, setProgress] = useState<Record<number, {goal: string[], progress:  number[], done: boolean }>>(
     Object.values(currentSession?.exercise_id || [])
     .reduce((acc,curr) => (
-      {...acc, [curr]: {...program.repScheme[appearance()][week]}}
+      {...acc, [curr]: {
+        'goal': Object.values(program.repScheme[appearance()][week] || {}).map(v => v), 
+        'progress': Object.values(program.repScheme[appearance()][week] || {}).map(() => 0),
+        'done': false
+      }}
     ),{})) 
-    
-  console.log(progress)
-
   const constructWorkout = (lift: typeof selectedLift ) => {
     if(!lift) return
       const {id, description, name, uploadAmmount, img } = workouts.find((w) => w.id === lift.id) as WorkoutBuilderType 
@@ -38,7 +41,7 @@ const appearance = () => appearanceToTier(selectedLift?.appearance || 0)
   console.log(activeProgram)
   console.log(currentSession)
   console.log(program)
-
+  console.log(progress)
 
   return (
     <>
@@ -62,9 +65,14 @@ const appearance = () => appearanceToTier(selectedLift?.appearance || 0)
             isSelected={true}
             repScheme={repSchemeSolver({modifiers:program.modifiers},{repScheme:program.repScheme},  selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
             onSelect={() => setSelectedLift(null)}
+            progress={{progress: progress[selectedLift.id], setProgress: (newProgress: {goal: string[], progress:  number[], done: boolean }) => setProgress({...progress, [selectedLift.id]: newProgress})}}
+            startTimer={setTimerStart}
             /> 
             )
           }
+          
+          {timerStart ? <Timer  timerStart={timerStart}/> : null }
+          
           <ProgressBar />
         </div>
     <button onClick={() => console.log(userContext.value)}>debug</button>

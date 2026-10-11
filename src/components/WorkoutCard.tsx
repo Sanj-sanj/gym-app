@@ -5,24 +5,32 @@
 import type { WorkoutBuilderType } from "../data/workouts";
 import { WorkoutEntry } from "../utils/createWorkout";
 
-export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }: {
+export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, progress, startTimer }: {
   workout: WorkoutEntry | WorkoutBuilderType,
   isSelected: boolean,
   repScheme?: {reps: string[], percents: number[]},
-  onSelect: (id: number) => void
-}) {
+  onSelect: (id: number) => void,
+  startTimer?: React.Dispatch<React.SetStateAction<Date | null>>
+  progress?: {progress: {
+    goal: string[];
+    progress: number[];
+    done: boolean;
+  },
+  setProgress: (newProgress:{goal: string[], progress:  number[], done: boolean } ) => void
+  }}) {
   console.log(workout, repScheme)
+  console.log(progress)
   return (
     <div className={`transition-all duration-300 delay-700 ${isSelected ? 'w-10/12 sm:w-96 mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
       <button
         title="Click/tap to preview"
-        onClick={!isSelected ? () => onSelect(workout.id) : () => {}}
-        className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+        onClick={!isSelected ? () => onSelect(workout.id) : isSelected && startTimer ? () => startTimer(new Date()) : () => {}}
+        className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
       >
-        {workout.name}
+        {progress ? 'Tap to Begin' : workout.name}
       </button>
 
-      {workout instanceof WorkoutEntry && isSelected ? (
+      {workout instanceof WorkoutEntry && isSelected  ? (
         <>
           <div className="text-center mt-4 p-4 bg-white rounded shadow relative">
             <h3 className="text-xl font-bold">{workout.name}</h3>
@@ -34,7 +42,9 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
             <ol>
             {repScheme?.reps.map((n,i)=> (
               <li key={i} className='grid grid-cols-3'>
-              <span className="text-left">Set {i+1}: {n} reps</span> <span>{repScheme.percents[i]}%</span> <span>{Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs</span>
+                <span className="text-left">Set {i+1}: {n} reps</span> 
+                <span>{repScheme.percents[i]}%</span> 
+                <span>{Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs </span>
               </li>
             ))
             } 
@@ -47,8 +57,8 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect }
             <p className="mt-2 text-gray-700">{workout.description}</p>
           </div>
         <div className="flex justify-center">
-      <button onClick={() => onSelect(workout.id)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-      Exercises
+      <button onClick={() => { onSelect(-1); startTimer ? startTimer(null) : null }} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+      Back
       </button> 
         </div>
         </>

@@ -16,5 +16,5 @@ const baseClasses = {
 {href ? (
   <a href={href} class={baseClasses[variant]} {...rest}>{innerText}</a>
 ) : (
-  <button type="button" class={baseClasses[variant]} {...rest}>{innerText}</button>
+  <a type="button" class={baseClasses[variant]} {...rest}>{innerText}</a>
 )}

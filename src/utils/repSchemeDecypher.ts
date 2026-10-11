@@ -13,7 +13,7 @@ export default function repSchemeSolver(
     'tier2' :
     'accessory' ;
   const weightPercents = modifiers[week][exerciseTier];
-  const reps = exerciseTier === 'accessory' ? repScheme.accessory['w1'] : repScheme[exerciseTier][week];
+  const reps = exerciseTier === 'accessory' ? repScheme.accessory['w1'] as string[]: repScheme[exerciseTier][week];
 
   return { reps, percents: weightPercents }
 }
