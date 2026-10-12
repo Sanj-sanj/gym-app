@@ -3,10 +3,9 @@ import { WorkoutTemplates, type TemplateDates } from "../data/workout-templates"
 import WorkoutCard from "./WorkoutCard"
 import { WorkoutEntry } from "../utils/createWorkout"
 import { workouts, type WorkoutBuilderType } from "../data/workouts"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import repSchemeSolver from "../utils/repSchemeDecypher"
 import ProgressBar from "./ProgressBar"
-import { Timer } from "./Timer"
 
 export default function ContinueWorkout() {
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
@@ -21,7 +20,6 @@ export default function ContinueWorkout() {
   const currentSession = program.programming[day as TemplateDates]
   const appearanceToTier = (appear: number) => {return appear === 0 ? 'tier1' : appear === 1 ? 'tier2' : 'accessory'}
   const appearance = () => appearanceToTier(selectedLift?.appearance || 0)
-  const [timerStart, setTimerStart] = useState<Date | null>(null)
 
   const [progress, setProgress] = useState<Record<number, {goal: string[], progress:  number[], done: boolean }>>(
     Object.values(currentSession?.exercise_id || [])
@@ -32,6 +30,7 @@ export default function ContinueWorkout() {
         'done': false
       }}
     ),{})) 
+
   const constructWorkout = (lift: typeof selectedLift ) => {
     if(!lift) return
       const {id, description, name, uploadAmmount, img } = workouts.find((w) => w.id === lift.id) as WorkoutBuilderType 
@@ -65,14 +64,10 @@ export default function ContinueWorkout() {
             isSelected={true}
             repScheme={repSchemeSolver({modifiers:program.modifiers},{repScheme:program.repScheme},  selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
             onSelect={() => setSelectedLift(null)}
-            progress={{progress: progress[selectedLift.id], setProgress: (newProgress: {goal: string[], progress:  number[], done: boolean }) => setProgress({...progress, [selectedLift.id]: newProgress})}}
-            startTimer={setTimerStart}
+            liftProgress={{progress: progress[selectedLift.id], setProgress: (newProgress: {goal: string[], progress:  number[], done: boolean }) => setProgress({...progress, [selectedLift.id]: newProgress})}}
             /> 
             )
           }
-          
-          {timerStart ? <Timer  timerStart={timerStart}/> : null }
-          
           <ProgressBar />
         </div>
     <button onClick={() => console.log(userContext.value)}>debug</button>
