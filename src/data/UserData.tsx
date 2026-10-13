@@ -9,10 +9,16 @@ export type AppContext = {
   userTemplateInProgress: TemplatePrograms | null,
   modal: {
     activeDay: TemplateDates | null,
-    entry: "edit lift" | 'new user' | null,
-    styleFunc: null | (() => void) 
+    entry: "edit lift" | 'new user' | 'log reps' | null,
+    styleFunc: null | (() => void) | ((reps: number) => void) 
   },
   userWorkoutEntries: Record<number, {"5rm": number, upcycle: number}>,
+  userSession: {
+    isDoneLifting: boolean,
+    liftRepDataByID: Record<number, {goal: number[], progress: number[], timeToComplete: number[], timeRested: number[]}>,
+    totalDuration: number,
+    date: Date
+  },
   archivedPrograms: {
     [T in TemplatePrograms]: {
       daysCompleted: number,
@@ -30,6 +36,12 @@ const Initial: AppContext = {
   userTemplateInProgress: null,
   modal: { activeDay: null, entry: null, styleFunc: null },
   userWorkoutEntries: {},
+  userSession: {
+    isDoneLifting: false,
+    liftRepDataByID: {},
+    totalDuration: 0,
+    date: new Date()
+  },
   archivedPrograms: {
     ppl: {
       daysCompleted: 0,

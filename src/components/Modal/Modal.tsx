@@ -38,7 +38,7 @@ export default function Modal({
           useCase === 'edit lift' ? 
           ModalEditLifts(workouts as WorkoutBuilderType[], closeModal) :
           useCase === 'log reps' ?
-          ModalLogReps(closeModal) :
+          ModalLogReps(closeModal, userContext.get().modal.styleFunc as (r: number) => void) : 
           <>someother cased</>
         }
       </div>

@@ -37,11 +37,28 @@ export default function ModalEditLifts(
           <div className="w-full flex flex-col">
             <label className="w-full flex justify-between mt-2">
               5 RM (In lbs): 
-              <input name='5rm' inputMode="numeric"  contentEditable='false' step={1} min={1} onChange={(e) => userEntries[lift.id] = {"5rm": Number(e.target.value), upcycle: 0} } required={true} className="w-1/4 font-stretch-125% outline rounded text-right p-0.5 ml-3 outline-slate-900 appearance-auto" type="number"></input>
+              <input 
+                name='5rm' 
+                type="number" 
+                contentEditable='false' 
+                step={1} 
+                min={1} 
+                onChange={(e) => e.target.valueAsNumber ? userEntries[lift.id] = {"5rm": Number(e.target.value), upcycle: 0} : null } 
+                required={true} 
+                className="w-1/4 font-stretch-125% outline rounded text-right p-0.5 ml-3 outline-slate-900 appearance-auto">
+              </input>
             </label>
             <label className="w-full flex justify-between mt-2">
               Upcycle: 
-              <input name='5rm' min={0} defaultValue={0} onChange={(e) => userEntries[lift.id] = {...userEntries[lift.id], upcycle: Number(e.target.value)}} className="w-1/4 outline rounded text-right p-0.5 ml-3 outline-slate-900" type="number"></input>
+              <input 
+                name='5rm' 
+                type='number' 
+                min={0} 
+                step={1} 
+                defaultValue={0} 
+                onChange={(e) => userEntries[lift.id] = {...userEntries[lift.id], upcycle: Number(e.target.value)}} 
+                className="w-1/4 outline rounded text-right p-0.5 ml-3 outline-slate-900">
+              </input>
             </label>
           </div>
         </div>
