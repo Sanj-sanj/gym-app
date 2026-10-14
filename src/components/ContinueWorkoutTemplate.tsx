@@ -1,34 +1,28 @@
 import { userContext } from "../data/UserData"
-import { WorkoutTemplates, type TemplateDates } from "../data/workout-templates"
-import WorkoutCard from "./WorkoutCard"
+import { WorkoutTemplates } from "../data/workout-templates"
 import { WorkoutEntry } from "../utils/createWorkout"
 import { workouts, type WorkoutBuilderType } from "../data/workouts"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import WorkoutCard from "./WorkoutCard"
 import repSchemeSolver from "../utils/repSchemeDecypher"
 import ProgressBar from "./ProgressBar"
 
 export default function ContinueWorkout() {
+  const {userTemplateInProgress, lastWeekAttempt, lastDayAttempt, userWorkoutEntries} = userContext.get()
+  const program = WorkoutTemplates.find(template => template.id === userTemplateInProgress)
+
+  console.log( userContext.get().userSession )
+  if(!program || !lastWeekAttempt || !lastDayAttempt) return <>no program found</>
+
+  const currentSession = program.programming[lastDayAttempt] as { name: string, exercise_id: number[] }
+  const totalProgress = useRef<Record<number, boolean>>(currentSession.exercise_id.reduce((acc, curr) => ({...acc, [curr]: false}), {}))
+  const [progBar, setProgBar] = useState(0)
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
-  const activeProgram = userContext.get().userTemplateInProgress
-  const week = userContext.get().lastWeekAttempt
-  const day = userContext.get().lastDayAttempt
-  const entries = userContext.get().userWorkoutEntries
-  const program = WorkoutTemplates.find(template => template.id === activeProgram)
-  
-  console.log(
-  userContext.get().userSession
-  )
-  if(!program || !week) return <>no program found</>
-
-  const currentSession = program.programming[day as TemplateDates]
-  const appearanceToTier = (appear: number) => {return appear === 0 ? 'tier1' : appear === 1 ? 'tier2' : 'accessory'}
-  const appearance = (liftOrderAppearance: number) => appearanceToTier(liftOrderAppearance)
-
   const [userLift, setUserLift] = useState<Record<number, {goal: string[], progress: number[],timeSpentLifting: string[], timeSpentResting: string[], finishedSets: boolean}>>(
     Object.values(currentSession?.exercise_id || [])
     .reduce((acc,curr) => (
       {...acc, [curr]: {
-        goal: [],
+        goal: Object.values(program.repScheme[appearanceToTier(currentSession.exercise_id.indexOf(Number(curr)))][lastWeekAttempt] || {}).map(v => v), 
         progress: [],
         timeSpentLifting: [],
         timeSpentResting: [],
@@ -36,27 +30,50 @@ export default function ContinueWorkout() {
       }}
     ),{})) 
 
+  function appearanceToTier(appear: number){
+    return appear === 0 ? 'tier1' : appear === 1 ? 'tier2' : 'accessory'
+  }
+   
   const constructWorkout = (lift: typeof selectedLift ) => {
     if(!lift) return
       const {id, description, name, uploadAmmount, img } = workouts.find((w) => w.id === lift.id) as WorkoutBuilderType 
-      const match = entries[id]
+      const match = userWorkoutEntries[id]
       return new WorkoutEntry(id, name, description, match['5rm'],match.upcycle, uploadAmmount, img )
   }
+
+  function userCompletedSets() {
+    if(!selectedLift) return false;
+    const id = selectedLift.id
+    if(userLift[id].finishedSets && !totalProgress.current[id]) {
+      totalProgress.current[id] = true
+      return true;
+    } else return false;
+  }
+
   useEffect(() => {
+    if(userLift) {
+      console.log('useEffect progress')
+      if(userCompletedSets()) setProgBar(progBar + 2)
+    }
+  }, [userLift])
+
+  useEffect(() => {
+    console.log('useEffect')
     if(selectedLift) {
       const selected = userLift[selectedLift.id]
-      const a  = program.repScheme[appearance(selectedLift.appearance)][week]
-      setUserLift({...userLift, [selectedLift.id]: {...selected, goal: a || []} })
+      const repsByTierAndWeek = program.repScheme[appearanceToTier(selectedLift.appearance)][lastWeekAttempt]
+      setUserLift({...userLift, [selectedLift.id]: {...selected, goal: repsByTierAndWeek || []} })
     }
   }, [selectedLift])
-  console.log(activeProgram)
+
+  console.log(userTemplateInProgress)
   console.log(currentSession)
   console.log(program)
   console.log(userLift)
 
   return (
     <>
-        <h2>{program.name} | {day}</h2>
+        <h2>{program.name} | {lastDayAttempt}</h2>
         <div className="flex flex-col flex-wrap w-full items-center mt-8">
           {
             selectedLift === null ? currentSession?.exercise_id.map(n => {
@@ -66,7 +83,12 @@ export default function ContinueWorkout() {
                 key={match.id} 
                 workout={match} 
                 isSelected={false} 
-                onSelect={(id: number) => setSelectedLift({id, appearance: currentSession.exercise_id.indexOf(Number(id))})} 
+                onSelect={(id: number) => 
+                  setSelectedLift({
+                    id, 
+                    appearance: currentSession.exercise_id.indexOf(Number(id))
+                  })
+                } 
                 />
               ) : <>no matching workouts</>;
             }) : (
@@ -74,13 +96,27 @@ export default function ContinueWorkout() {
             key={workouts.find((w) => w.id === selectedLift.id)?.id || 'null'}
             workout={constructWorkout(selectedLift) as WorkoutEntry}
             isSelected={true}
-            repScheme={repSchemeSolver({modifiers:program.modifiers},{repScheme:program.repScheme},  selectedLift.appearance, userContext.get().lastWeekAttempt || 'w1')}
+            repScheme={repSchemeSolver(
+              {modifiers: program.modifiers},
+              {repScheme: program.repScheme},
+              selectedLift.appearance, 
+              lastWeekAttempt
+            )}
             onSelect={() => setSelectedLift(null)}
-            liftProgress={{userLift: userLift[selectedLift.id], setUserLift: (newProgress: {goal: string[], progress: number[], timeSpentLifting: string[], timeSpentResting: string[], finishedSets: boolean }) => setUserLift({...userLift, [selectedLift.id]: newProgress})}}
+            liftProgress={{
+              userLift: userLift[selectedLift.id], 
+              setUserLift: (newProgress: {
+                goal: string[], 
+                progress: number[], 
+                timeSpentLifting: string[], 
+                timeSpentResting: string[], 
+                finishedSets: boolean 
+              }) => setUserLift({...userLift, [selectedLift.id]: newProgress})
+            }}
             /> 
             )
           }
-          <ProgressBar />
+          <ProgressBar progression={progBar} />
         </div>
     <button onClick={() => console.log(userContext.value)}>debug</button>
     </>
