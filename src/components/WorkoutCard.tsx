@@ -1,15 +1,16 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import type { WorkoutBuilderType } from "../data/workouts";
 import { WorkoutEntry } from "../utils/createWorkout";
-import { Timer } from "./Timer";
 import Modal from "./Modal/Modal";
 import { isModalActive, userContext } from "../data/UserData";
 
-export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, liftProgress }: {
+export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, setTimer, liftProgress, activeLiftID }: {
   workout: WorkoutEntry | WorkoutBuilderType,
   isSelected: boolean,
   repScheme?: {reps: string[], percents: number[]},
   onSelect: (id: number) => void,
+  setTimer?: React.Dispatch<React.SetStateAction<Date | null>>
+  activeLiftID?: React.RefObject<number | null>,
   liftProgress?: {
     userLift: {
       goal: string[];
@@ -17,21 +18,24 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
       timeSpentLifting: string[];
       timeSpentResting: string[];
       finishedSets: boolean
+      timer: {
+        active: React.RefObject<'rest' | 'rep' | null>
+        formatted: React.RefObject<string | null>
+      }
     },
     setUserLift: (newProgress: { 
       goal: string[],
       progress: number[],
       timeSpentLifting: string[];
       timeSpentResting: string[];
-      finishedSets: boolean
+      finishedSets: boolean,
+      timer: {
+        active: React.RefObject<'rest' | 'rep' | null>
+        formatted: React.RefObject<string | null>
+      }
     } ) => void
   }
 }) {
-
-  const [repTimer, setRepTimer] = useState<Date | null>(null)
-  const [restTimer, setRestTimer] = useState<Date | null>(null)
-  let workoutHasBegun = useRef(false)
-  let lastTimeLogged = useRef<string | null>(null)
 
   console.log(workout, repScheme)
   console.log(liftProgress?.userLift)
@@ -45,25 +49,34 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
   })
 
   function finishedSets() {
-    if(!liftProgress) return;
+    if(!liftProgress || !setTimer || !activeLiftID) return;
     const { userLift, setUserLift } = liftProgress
+    setTimer(null)
+    userLift.timer.active.current = null
+    userLift.timer.formatted.current = null
+    activeLiftID.current = null
+
     setUserLift({...userLift, finishedSets: true})
+    
   }
 
   function handleLiftSetTransition() {
-    if(!liftProgress) return;
-    if(!repTimer && !restTimer) workoutHasBegun.current = true
+    if(!liftProgress || !setTimer || !activeLiftID) return;
     const {userLift, setUserLift} = liftProgress
-      console.log(lastTimeLogged)
+    const {active, formatted}  = userLift.timer
+    activeLiftID.current = workout.id
 
-    if(!repTimer) {
-      setUserLift({...userLift, timeSpentResting: [...userLift.timeSpentResting, lastTimeLogged.current || '0 seconds'] })
-      setRestTimer(null)
-      setRepTimer(new Date()) 
+    if(active.current === 'rest') {
+      console.log('rest active')
+      setUserLift({...userLift, timeSpentResting: [...userLift.timeSpentResting, formatted.current || '0 seconds'] })
+      setTimer(new Date()) 
+      if(userLift.progress.length < userLift.goal.length) active.current = 'rep'
+        else active.current = null
     } else {
-      if(repTimer) {
+      if(active.current === 'rep') {
+      console.log('rep active')
         isModalActive.set(true)
-        let repTimeCurr = lastTimeLogged.current
+        let repTimeCurr = formatted.current
         userContext.setKey('modal', {
           entry: 'log reps',
           activeDay: userContext.get().lastDayAttempt, styleFunc: (repsDid: number) => { 
@@ -74,10 +87,14 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
             }) 
           }
         })
+        active.current = 'rest'
+        setTimer(new Date()) 
         console.log('handler ', userLift)
       }
-      setRestTimer(new Date())
-      setRepTimer(null) 
+    }
+    if(!active.current && userLift.finishedSets === false )  {
+      setTimer(new Date())
+      active.current = 'rep'
     }
   }
 
@@ -94,11 +111,25 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
         </button>
       ) : (
         <button
-        title={`Click/tap to ${!repTimer ? 'start' : 'log'} workout.`}
-        onClick={() => !liftProgress.userLift.finishedSets ? handleLiftSetTransition() : null}
-        className={`w-full p-4 rounded transition-colors duration-500 ${liftProgress.userLift.finishedSets ? 'bg-indigo-600 text-white hover:bg-indigo-500' : repTimer ? 'bg-green-600 text-white hover:bg-green-500' : restTimer ? 'bg-yellow-500  hover:bg-yellow-400' : 'bg-indigo-600 text-white hover:bg-indigo-500'}`}
+        title={`Click/tap to ${!liftProgress.userLift.timer.active.current ? 'start' : 'log'} workout.`}
+        onClick={() => !activeLiftID?.current ||  activeLiftID?.current === workout.id && !liftProgress.userLift.finishedSets ? handleLiftSetTransition() : null}
+        className={`w-full p-4 rounded transition-colors duration-500 ${
+          liftProgress.userLift.timer.active.current === 'rep' ? 
+            'bg-green-600 text-white hover:bg-green-500' :
+          liftProgress.userLift.timer.active.current === 'rest' ? 
+            'bg-yellow-500  hover:bg-yellow-400' :
+            'bg-indigo-600 text-white hover:bg-indigo-500'
+        }`}
         >
-        {liftProgress.userLift.finishedSets ? 'All sets completed!' : repTimer === null && restTimer === null ? 'Tap to start / log' : repTimer ? <Timer timerStart={repTimer} ref={lastTimeLogged}/> : <Timer timerStart={restTimer} ref={lastTimeLogged} /> }
+        {
+          liftProgress.userLift.finishedSets ? 
+          'All sets completed!' : 
+          liftProgress.userLift.timer.active.current === null ?
+          'Tap to start set' :
+          liftProgress.userLift.timer.active.current === 'rep' ?
+          'Tap to rest' : 
+          'Tap to lift'
+        }
         </button>
       )
     }
@@ -113,10 +144,9 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
             <h4 className="font-bold">Rep Scheme:</h4>
             <ol>
             {repScheme?.reps.map((n,i)=> (
-              <li key={i} className='grid grid-cols-3'>
+              <li key={i} className='grid grid-cols-2'>
                 <span className="text-left">Set {i+1}: {n} reps</span> 
-                <span>{repScheme.percents[i]}%</span> 
-                <span>{Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs </span>
+                <span>{repScheme.percents[i]}% {Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs </span>
               </li>
             ))
             } 
@@ -129,12 +159,19 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
             <p className="mt-2 text-gray-700">{workout.description}</p>
           </div>
 
-          <div className="flex flex-  justify-center">
-            {restTimer ? <Modal useCase="log reps"/> : null }
-            <button onClick={() => {setRepTimer(null); setRestTimer(null); onSelect(-1)} } className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+          <div className="flex justify-center">
+            {liftProgress?.userLift.timer.active.current === 'rest' ? <Modal useCase="log reps"/> : null }
+            <button onClick={() => onSelect(-1)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
             Back
             </button> 
-            <button onClick={finishedSets} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
+            <button 
+            onClick={ () => {
+              activeLiftID && activeLiftID.current === workout.id && !liftProgress?.userLift.finishedSets ?
+              finishedSets() : 
+              null
+
+            }} 
+            className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
               Finish all sets
             </button> 
           </div>

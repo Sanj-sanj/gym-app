@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react"
 import WorkoutCard from "./WorkoutCard"
 import repSchemeSolver from "../utils/repSchemeDecypher"
 import ProgressBar from "./ProgressBar"
+import { Timer } from "./Timer"
 
 export default function ContinueWorkout() {
   const {userTemplateInProgress, lastWeekAttempt, lastDayAttempt, userWorkoutEntries} = userContext.get()
@@ -18,7 +19,19 @@ export default function ContinueWorkout() {
   const totalProgress = useRef<Record<number, boolean>>(currentSession.exercise_id.reduce((acc, curr) => ({...acc, [curr]: false}), {}))
   const [progBar, setProgBar] = useState(0)
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
-  const [userLift, setUserLift] = useState<Record<number, {goal: string[], progress: number[],timeSpentLifting: string[], timeSpentResting: string[], finishedSets: boolean}>>(
+  const [timer, setTimer] = useState<Date | null>(null)
+  const activeLiftForTimer = useRef<number | null>(null)
+  const [userLift, setUserLift] = useState<Record<number, {
+    goal: string[], 
+    progress: number[],
+    timeSpentLifting: string[], 
+    timeSpentResting: string[], 
+    finishedSets: boolean, 
+    timer: {
+      active: React.RefObject<'rest' | 'rep' | null>
+      formatted: React.RefObject<string | null>
+    }
+  }>>(
     Object.values(currentSession?.exercise_id || [])
     .reduce((acc,curr) => (
       {...acc, [curr]: {
@@ -26,7 +39,11 @@ export default function ContinueWorkout() {
         progress: [],
         timeSpentLifting: [],
         timeSpentResting: [],
-        finishedSets: false
+        finishedSets: false,
+        timer: {
+          active: useRef<null | string>(null),
+          formatted: useRef<null | string>(null)
+        }
       }}
     ),{})) 
 
@@ -52,13 +69,11 @@ export default function ContinueWorkout() {
 
   useEffect(() => {
     if(userLift) {
-      console.log('useEffect progress')
       if(userCompletedSets()) setProgBar(progBar + 2)
     }
   }, [userLift])
 
   useEffect(() => {
-    console.log('useEffect')
     if(selectedLift) {
       const selected = userLift[selectedLift.id]
       const repsByTierAndWeek = program.repScheme[appearanceToTier(selectedLift.appearance)][lastWeekAttempt]
@@ -66,14 +81,20 @@ export default function ContinueWorkout() {
     }
   }, [selectedLift])
 
+
   console.log(userTemplateInProgress)
   console.log(currentSession)
   console.log(program)
   console.log(userLift)
+  console.log(activeLiftForTimer.current)
+  console.log(selectedLift?.id)
 
   return (
     <>
         <h2>{program.name} | {lastDayAttempt}</h2>
+        <span>
+        </span>
+        { activeLiftForTimer.current ? <h3>In progress: {workouts.find(w => w.id === activeLiftForTimer.current)?.name}</h3> : null }
         <div className="flex flex-col flex-wrap w-full items-center mt-8">
           {
             selectedLift === null ? currentSession?.exercise_id.map(n => {
@@ -103,6 +124,8 @@ export default function ContinueWorkout() {
               lastWeekAttempt
             )}
             onSelect={() => setSelectedLift(null)}
+            setTimer={setTimer}
+            activeLiftID={activeLiftForTimer}
             liftProgress={{
               userLift: userLift[selectedLift.id], 
               setUserLift: (newProgress: {
@@ -110,11 +133,19 @@ export default function ContinueWorkout() {
                 progress: number[], 
                 timeSpentLifting: string[], 
                 timeSpentResting: string[], 
-                finishedSets: boolean 
+                finishedSets: boolean,
+                timer: {
+                  active: React.RefObject<'rest' | 'rep' | null>
+                  formatted: React.RefObject<string | null>
+                }
               }) => setUserLift({...userLift, [selectedLift.id]: newProgress})
             }}
             /> 
             )
+          }
+          { activeLiftForTimer.current && !userLift[activeLiftForTimer.current].finishedSets ? 
+          <Timer timerStart={timer} ref={userLift[activeLiftForTimer.current].timer.formatted || null} /> :
+          null
           }
           <ProgressBar progression={progBar} />
         </div>
