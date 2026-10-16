@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, act } from "react";
 import type { WorkoutBuilderType } from "../data/workouts";
 import { WorkoutEntry } from "../utils/createWorkout";
 import Modal from "./Modal/Modal";
@@ -33,10 +33,12 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
         active: React.RefObject<'rest' | 'rep' | null>
         formatted: React.RefObject<string | null>
       }
-    } ) => void
+    }) => void
   }
 }) {
+  const activeSet = useRef<HTMLLIElement| null>(null)
 
+  console.log(activeSet.current)
   console.log(workout, repScheme)
   console.log(liftProgress?.userLift)
 
@@ -114,9 +116,11 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
         title={`Click/tap to ${!liftProgress.userLift.timer.active.current ? 'start' : 'log'} workout.`}
         onClick={() => !activeLiftID?.current ||  activeLiftID?.current === workout.id && !liftProgress.userLift.finishedSets ? handleLiftSetTransition() : null}
         className={`w-full p-4 rounded transition-colors duration-500 ${
-          liftProgress.userLift.timer.active.current === 'rep' ? 
-            'bg-green-600 text-white hover:bg-green-500' :
+          liftProgress.userLift.finishedSets ?
+            'bg-mauve-600 text-white hover:bg-mauve-500' :
           liftProgress.userLift.timer.active.current === 'rest' ? 
+            'bg-green-600 text-white hover:bg-green-500' :
+          liftProgress.userLift.timer.active.current === 'rep' ? 
             'bg-yellow-500  hover:bg-yellow-400' :
             'bg-indigo-600 text-white hover:bg-indigo-500'
         }`}
@@ -143,13 +147,12 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
             <p>Initial 5 rep max: {workout.rm5} lbs</p>
             <h4 className="font-bold">Rep Scheme:</h4>
             <ol>
-            {repScheme?.reps.map((n,i)=> (
-              <li key={i} className='grid grid-cols-2'>
-                <span className="text-left">Set {i+1}: {n} reps</span> 
-                <span>{repScheme.percents[i]}% {Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs </span>
-              </li>
-            ))
-            } 
+              {repScheme?.reps.map((n,i)=> (
+                <li key={i} className={`grid grid-cols-2 px-2 py-1 rounded ${liftProgress?.userLift.progress.length === i && activeLiftID?.current === workout.id ? 'bg-amber-400': 'bg-white'}`} ref={activeSet}>
+                  <span className="text-left">Set {i+1}: {n} reps</span> 
+                  <span className="text-right"><span>{repScheme.percents[i]}%</span> {Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs </span>
+                </li>
+              ))} 
             </ol>
             <img
               src={workout.img}

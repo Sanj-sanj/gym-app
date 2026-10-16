@@ -143,12 +143,12 @@ export default function ContinueWorkout() {
             /> 
             )
           }
+        </div>
           { activeLiftForTimer.current && !userLift[activeLiftForTimer.current].finishedSets ? 
           <Timer timerStart={timer} ref={userLift[activeLiftForTimer.current].timer.formatted || null} /> :
           null
           }
           <ProgressBar progression={progBar} />
-        </div>
     <button onClick={() => console.log(userContext.value)}>debug</button>
     </>
   )
