@@ -8,6 +8,7 @@ export type AppContext = {
   userName: string | null,
   lastWeekAttempt: TemplateProgramWeeks | null,
   lastDayAttempt: TemplateDates | null,
+  lastMonthAttempt: Months | null,
   lastYearAttempt: Year | null,
   lastEntryTitle: string | null,
   userTemplateInProgress: TemplatePrograms | null,
@@ -32,7 +33,7 @@ export type AppContext = {
       timeSpentResting: string[]
     }>,
     totalDuration: number,
-    date: Date
+    date: string | null,
   }
   archive: { 
     [T in TemplatePrograms]: Partial<Record<Year, Record<Months,
@@ -56,6 +57,7 @@ const Initial: AppContext = {
   userName: null,
   lastWeekAttempt: null,
   lastDayAttempt: null,
+  lastMonthAttempt: null,
   lastYearAttempt: null,
   lastEntryTitle: null,
   userLiftStatus: 'not lifting',
@@ -69,7 +71,7 @@ const Initial: AppContext = {
     month: null,
     liftDataByID: {},
     totalDuration: 0,
-    date: new Date()
+    date: null,
   },
   archive: {
     ppl: {2026: {Jan: {}, Feb: {}, Mar: {}, Apr: {}, May: {}, Jun: {}, Jul: {}, Aug: {}, Sep: {}, Oct: {}, Nov: {}, Dec: {}}},

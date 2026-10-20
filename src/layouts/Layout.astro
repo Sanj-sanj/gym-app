@@ -1,6 +1,5 @@
 ---
   import '../styles/global.css'
-  import { ClientRouter } from 'astro:transitions';
   import Navigation from '../components/Navigation.astro';
 ---
 <!doctype html>
@@ -10,13 +9,12 @@
       <meta name="viewport" content="width=device-width" />
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <link rel="icon" href="/favicon.ico" />
-      <ClientRouter />
       <meta name="generator" content={Astro.generator} />
       <title>Gym App</title>
     </head>
-    <body class="min-h-screen flex flex-col bg-gray-100">
+    <body class="min-h-screen flex flex-col bg-gray-300">
       <Navigation />
-      <main class="flex-1 flex items-center justify-center">
+      <main class="flex-1 flex items-center justify-center">  
           <slot />
       </main>
     </body>

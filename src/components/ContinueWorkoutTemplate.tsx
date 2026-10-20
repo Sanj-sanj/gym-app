@@ -11,23 +11,43 @@ import { cycleDay, cycleMonth, cycleWeek, cycleYear } from "../utils/cycleDay"
 
 export default function ContinueWorkout() {
   const {archive, userSession, userTemplateInProgress, userWorkoutEntries} = userContext.get()
-  const program = WorkoutTemplates.find(template => template.id === userTemplateInProgress)
+  const {lastDayAttempt, lastWeekAttempt, lastMonthAttempt, lastYearAttempt} = userContext.get()
 
+  const program = WorkoutTemplates.find(template => template.id === userTemplateInProgress)
   if(!program) return <>You have not created a program yet!</>
 
-  if(!userSession.day && !userSession.week && !userSession.year) {
-   const date = new Date()
-   userContext.setKey('userSession', {...userSession, date, day: cycleDay(), week: cycleWeek(), month: cycleMonth(), year: cycleYear()})
+  function useSessionInit(preDay?: TemplateDates, preWeek?: TemplateProgramWeeks, preMonth?: Months, preYear?: Year) {
+      const date = new Date().toLocaleString()
+const programWeeks = Object.keys(program!.modifiers).map(v => v as TemplateProgramWeeks)
+const programDays = Object.keys(program!.programming).map(v => v as TemplateDates)
+      userContext.setKey('userSession', {
+        ...userSession,
+        date,
+        day: cycleDay(programDays, preDay),
+        week: cycleWeek(preWeek, preDay, programWeeks, programDays),
+        month: cycleMonth(preMonth),
+        year: cycleYear(preYear)
+      })
   }
 
-    console.log(userContext.value)
-
+  if(lastDayAttempt) {
+    console.log('itter session')
+    useSessionInit(lastDayAttempt, lastWeekAttempt!, lastMonthAttempt!, lastYearAttempt!)
+  } else if(!userSession.day && !userSession.week && !userSession.year) {
+    console.log('new session')
+    useSessionInit()
+  }
+  console.log(program)
+  console.log(userContext.value)
   const thisDay = userSession.day as TemplateDates
   const thisWeek = userSession.week as TemplateProgramWeeks
   const thisYear = userSession.year as Year
   const thisMonth = userSession.month as Months
 
   const currentSession = program.programming[thisDay] as { name: string, exercise_id: number[] }
+  console.log(thisDay)
+
+  console.log(currentSession)
   const totalProgress = useRef<Record<number, boolean>>(currentSession.exercise_id.reduce((acc, curr) => ({...acc, [curr]: false}), {}))
   const [progBar, setProgBar] = useState(0)
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
@@ -87,15 +107,20 @@ export default function ContinueWorkout() {
     userContext.setKey('archive', {
       ...archive,
       [userTemplateInProgress as TemplatePrograms]: {
-        [thisYear]: {...thisYearContent, [thisMonth]: {...thisMonthContent, [userSession.date.toLocaleString()]: userSession.liftDataByID }} 
+        [thisYear]: {...thisYearContent, [thisMonth]: {...thisMonthContent, [userSession.date!.toLocaleString()]: userSession.liftDataByID }} 
       }
     })
+    console.log('handle save work')
     localStorage.setItem('userContext', JSON.stringify(userContext.value))
   }
   function handleEndofWorkout() {
+    console.log('handle end work')
     userContext.setKey('lastDayAttempt', thisDay)
     userContext.setKey('lastWeekAttempt', thisWeek)
-    userContext.setKey('lastEntryTitle', userSession.date.toLocaleString())
+    userContext.setKey('lastMonthAttempt', thisMonth)
+    userContext.setKey('lastYearAttempt', thisYear)
+    userContext.setKey('lastEntryTitle', userSession.date!.toLocaleString())
+    userContext.setKey('userSession', {day: null, week: null, month: null, year: null, totalDuration: 0, date: null, liftDataByID: {} })
     saveToArchive()
   }
 
@@ -119,7 +144,7 @@ export default function ContinueWorkout() {
   console.log(userTemplateInProgress)
   //console.log(currentSession)
   //console.log(program)
-  //console.log(userLift)
+  console.log(userLift)
   //console.log(activeLiftForTimer.current)
   //console.log(selectedLift?.id)
 
@@ -193,7 +218,7 @@ export default function ContinueWorkout() {
             
             <button 
             onClick={() => handleEndofWorkout()}
-            className="outline outline-fuchsia-400 text-fuchsia-400 p-2 rounded">Save to Log</button>
+            className="outline pointer-events-auto hover:outline-fuchsia-400 outline-fuchsia-500 text-fuchsia-500 p-2 rounded">Save to Log</button>
             </div>
           ) : null
           }

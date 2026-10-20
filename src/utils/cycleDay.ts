@@ -1,26 +1,40 @@
 import type { Months, Year } from '../data/UserData'
 import { type TemplateDates, type TemplateProgramWeeks } from '../data/workout-templates'
 
-export function cycleDay(prevDay?: TemplateDates) {
+export function cycleDay(programDays?: TemplateDates[], prevDay?: TemplateDates | null) {
   if(!prevDay) return 'day1'
   const dates: TemplateDates[] = ['day1', 'day2', 'day3', 'day4', 'day5', 'day6']
-  let newInd = dates.findIndex(v => v === prevDay) + 1
-  if(newInd > dates.length) newInd = 0 
-  return dates[newInd] 
+  let newInd = dates!.indexOf(prevDay) + 1
+  console.log(programDays, prevDay)
+  if(newInd >= programDays!.length) newInd = 0 
+  return dates![newInd] 
 }
-export function cycleWeek(prevWeek?: TemplateProgramWeeks) {
-  if(!prevWeek) return 'w1'
+export function cycleWeek(
+  prevWeek?: TemplateProgramWeeks | null,
+  prevDay?: TemplateDates | null,
+  programWeeks?: TemplateProgramWeeks[],
+  programDays?: TemplateDates[] | null,
+) {
+  if(!prevWeek || !prevDay || !programDays || !programWeeks) return 'w1'
   const weeks: TemplateProgramWeeks[] = ['w1', 'w2', 'w3', 'w4']
-  let newInd = weeks.findIndex(v => v === prevWeek) + 1
-  if(newInd > weeks.length) newInd = 0 
-  return weeks[newInd] 
+
+  if(programDays.indexOf(prevDay) === programDays.length - 1) {
+    let newWeekIndex = programWeeks.indexOf(prevWeek) + 1
+    if(newWeekIndex >= programWeeks.length) return 'w1'
+    return programWeeks[newWeekIndex]
+  }
+  return prevWeek
 }
+function isLastDayofProgram(programDays: TemplateDates[], date: TemplateDates) {
+  if(!programDays || !date) return false
+  if(programDays.indexOf(date) === programDays.length - 1) return true
+  return false
+}
+
 export function cycleYear(prevYear?: Year) {
-  if(!prevYear) return new Date().getFullYear().toString() as Year
-  const years: Year[] = ['2026', '2027']
-  let newInd = years.findIndex(v => v === prevYear) + 1
-  if(newInd > years.length) newInd = 0 
-  return years[newInd] 
+  const thisYear = new Date().getFullYear().toString() as Year
+  if(!prevYear || prevYear !== thisYear) return thisYear
+  return prevYear
 }
 
   const months: Months[] = [
@@ -40,9 +54,6 @@ export function cycleYear(prevYear?: Year) {
   
 export function cycleMonth(prevMonth?: Months) {
   const mI = new Date().getMonth()
-  if(!prevMonth) return months[mI]
-
-  let newInd = months.findIndex(v => v === prevMonth) + 1
-  if(newInd > months.length) newInd = 0 
-  return months[newInd] 
+  if(!prevMonth || prevMonth !== months[mI]) return months[mI]
+  return prevMonth
 }
