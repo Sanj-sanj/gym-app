@@ -1,5 +1,5 @@
-import { userContext } from "../data/UserData"
-import { WorkoutTemplates } from "../data/workout-templates"
+import { userContext, type Months, type Year } from "../data/UserData"
+import { WorkoutTemplates, type TemplateDates, type TemplatePrograms, type TemplateProgramWeeks } from "../data/workout-templates"
 import { WorkoutEntry } from "../utils/createWorkout"
 import { workouts, type WorkoutBuilderType } from "../data/workouts"
 import { useEffect, useRef, useState } from "react"
@@ -7,15 +7,27 @@ import WorkoutCard from "./WorkoutCard"
 import repSchemeSolver from "../utils/repSchemeDecypher"
 import ProgressBar from "./ProgressBar"
 import { Timer } from "./Timer"
+import { cycleDay, cycleMonth, cycleWeek, cycleYear } from "../utils/cycleDay"
 
 export default function ContinueWorkout() {
-  const {userTemplateInProgress, lastWeekAttempt, lastDayAttempt, userWorkoutEntries} = userContext.get()
+  const {archive, userSession, userTemplateInProgress, userWorkoutEntries} = userContext.get()
   const program = WorkoutTemplates.find(template => template.id === userTemplateInProgress)
 
-  console.log( userContext.get().userSession )
-  if(!program || !lastWeekAttempt || !lastDayAttempt) return <>no program found</>
+  if(!program) return <>You have not created a program yet!</>
 
-  const currentSession = program.programming[lastDayAttempt] as { name: string, exercise_id: number[] }
+  if(!userSession.day && !userSession.week && !userSession.year) {
+   const date = new Date()
+   userContext.setKey('userSession', {...userSession, date, day: cycleDay(), week: cycleWeek(), month: cycleMonth(), year: cycleYear()})
+  }
+
+    console.log(userContext.value)
+
+  const thisDay = userSession.day as TemplateDates
+  const thisWeek = userSession.week as TemplateProgramWeeks
+  const thisYear = userSession.year as Year
+  const thisMonth = userSession.month as Months
+
+  const currentSession = program.programming[thisDay] as { name: string, exercise_id: number[] }
   const totalProgress = useRef<Record<number, boolean>>(currentSession.exercise_id.reduce((acc, curr) => ({...acc, [curr]: false}), {}))
   const [progBar, setProgBar] = useState(0)
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
@@ -24,6 +36,7 @@ export default function ContinueWorkout() {
   const [userLift, setUserLift] = useState<Record<number, {
     goal: string[], 
     progress: number[],
+    weight: number[],
     timeSpentLifting: string[], 
     timeSpentResting: string[], 
     finishedSets: boolean, 
@@ -31,12 +44,12 @@ export default function ContinueWorkout() {
       active: React.RefObject<'rest' | 'rep' | null>
       formatted: React.RefObject<string | null>
     }
-  }>>(
-    Object.values(currentSession?.exercise_id || [])
+  }>>(Object.values(currentSession?.exercise_id || [])
     .reduce((acc,curr) => (
       {...acc, [curr]: {
-        goal: Object.values(program.repScheme[appearanceToTier(currentSession.exercise_id.indexOf(Number(curr)))][lastWeekAttempt] || {}).map(v => v), 
+        goal: Object.values(program.repScheme[appearanceToTier(currentSession.exercise_id.indexOf(Number(curr)))][thisWeek] || {}).map(v => v), 
         progress: [],
+        weight: [],
         timeSpentLifting: [],
         timeSpentResting: [],
         finishedSets: false,
@@ -45,7 +58,7 @@ export default function ContinueWorkout() {
           formatted: useRef<null | string>(null)
         }
       }}
-    ),{})) 
+    ), {}))
 
   function appearanceToTier(appear: number){
     return appear === 0 ? 'tier1' : appear === 1 ? 'tier2' : 'accessory'
@@ -67,31 +80,52 @@ export default function ContinueWorkout() {
     } else return false;
   }
 
+  function saveToArchive() {
+    const thisYearContent = archive[userTemplateInProgress as TemplatePrograms][thisYear]
+    const thisMonthContent = thisYearContent![thisMonth]
+    
+    userContext.setKey('archive', {
+      ...archive,
+      [userTemplateInProgress as TemplatePrograms]: {
+        [thisYear]: {...thisYearContent, [thisMonth]: {...thisMonthContent, [userSession.date.toLocaleString()]: userSession.liftDataByID }} 
+      }
+    })
+    localStorage.setItem('userContext', JSON.stringify(userContext.value))
+  }
+  function handleEndofWorkout() {
+    userContext.setKey('lastDayAttempt', thisDay)
+    userContext.setKey('lastWeekAttempt', thisWeek)
+    userContext.setKey('lastEntryTitle', userSession.date.toLocaleString())
+    saveToArchive()
+  }
+
   useEffect(() => {
     if(userLift) {
-      if(userCompletedSets()) setProgBar(progBar + 2)
+      console.log('lift', userLift)
+      if(userCompletedSets()) { 
+        setProgBar(progBar + 10 / currentSession.exercise_id.length)
+      }
     }
   }, [userLift])
 
   useEffect(() => {
     if(selectedLift) {
       const selected = userLift[selectedLift.id]
-      const repsByTierAndWeek = program.repScheme[appearanceToTier(selectedLift.appearance)][lastWeekAttempt]
+      const repsByTierAndWeek = program.repScheme[appearanceToTier(selectedLift.appearance)][thisWeek]
       setUserLift({...userLift, [selectedLift.id]: {...selected, goal: repsByTierAndWeek || []} })
     }
   }, [selectedLift])
 
-
   console.log(userTemplateInProgress)
-  console.log(currentSession)
-  console.log(program)
-  console.log(userLift)
-  console.log(activeLiftForTimer.current)
-  console.log(selectedLift?.id)
+  //console.log(currentSession)
+  //console.log(program)
+  //console.log(userLift)
+  //console.log(activeLiftForTimer.current)
+  //console.log(selectedLift?.id)
 
   return (
     <>
-        <h2>{program.name} | {lastDayAttempt}</h2>
+        <h2>{program.name} | {thisWeek} | {thisDay}</h2>
         <span>
         </span>
         { activeLiftForTimer.current ? <h3>In progress: {workouts.find(w => w.id === activeLiftForTimer.current)?.name}</h3> : null }
@@ -121,7 +155,7 @@ export default function ContinueWorkout() {
               {modifiers: program.modifiers},
               {repScheme: program.repScheme},
               selectedLift.appearance, 
-              lastWeekAttempt
+              thisWeek
             )}
             onSelect={() => setSelectedLift(null)}
             setTimer={setTimer}
@@ -131,6 +165,7 @@ export default function ContinueWorkout() {
               setUserLift: (newProgress: {
                 goal: string[], 
                 progress: number[], 
+                weight: number[], 
                 timeSpentLifting: string[], 
                 timeSpentResting: string[], 
                 finishedSets: boolean,
@@ -149,6 +184,19 @@ export default function ContinueWorkout() {
           null
           }
           <ProgressBar progression={progBar} />
+
+          // auto save entry to log format and redirect the user to corresponding log entry
+          // have log entry direct to all entries or to calendar page with calendar set to date of entry
+          {Object.values(totalProgress.current).every(v => v) ? (
+            <div className="flex flex-col ">
+            Finished all workouts
+            
+            <button 
+            onClick={() => handleEndofWorkout()}
+            className="outline outline-fuchsia-400 text-fuchsia-400 p-2 rounded">Save to Log</button>
+            </div>
+          ) : null
+          }
     <button onClick={() => console.log(userContext.value)}>debug</button>
     </>
   )

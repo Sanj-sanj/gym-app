@@ -1,4 +1,4 @@
-import { useRef, useEffect, act } from "react";
+import { useRef, useEffect } from "react";
 import type { WorkoutBuilderType } from "../data/workouts";
 import { WorkoutEntry } from "../utils/createWorkout";
 import Modal from "./Modal/Modal";
@@ -15,6 +15,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
     userLift: {
       goal: string[];
       progress: number[];
+      weight: number[];
       timeSpentLifting: string[];
       timeSpentResting: string[];
       finishedSets: boolean
@@ -26,6 +27,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
     setUserLift: (newProgress: { 
       goal: string[],
       progress: number[],
+      weight: number[],
       timeSpentLifting: string[];
       timeSpentResting: string[];
       finishedSets: boolean,
@@ -38,11 +40,33 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
 }) {
   const activeSet = useRef<HTMLLIElement| null>(null)
 
-  console.log(activeSet.current)
-  console.log(workout, repScheme)
-  console.log(liftProgress?.userLift)
+ // console.log(activeSet.current)
+ // console.log(workout, repScheme)
+ // console.log(liftProgress?.userLift)
 
+  function handleContextProgression() {
+    if(!liftProgress || !repScheme) return;
+    const {userLift} = liftProgress
+    const newLiftData  =  {
+        goalReps: userLift.goal,
+        goalWeight: repScheme.percents.map(percent => repPercentToWeight(percent)) as number[],
+        progressReps: userLift.progress,
+        progressWeight: userLift.weight,
+        timeSpentLifting: userLift.timeSpentLifting,
+        timeSpentResting: userLift.timeSpentResting
+    }
+  console.log(newLiftData)
+
+   const prev = userContext.get().userSession
+    userContext.setKey('userSession', {...prev, liftDataByID: {...prev.liftDataByID, [workout.id]: newLiftData}} )
+  }
+
+  function repPercentToWeight(percent: number ) {
+    if(workout instanceof WorkoutEntry)
+      return Math.round(Math.ceil(workout.currentTrainingMax() * (percent * .01) / 5)) * 5
+  }
   useEffect(() => {
+    handleContextProgression()
     const goal = liftProgress?.userLift.goal
     const progress = liftProgress?.userLift.progress
     if(goal && progress && goal.length === progress.length && !liftProgress.userLift.finishedSets) {
@@ -75,16 +99,18 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
       if(userLift.progress.length < userLift.goal.length) active.current = 'rep'
         else active.current = null
     } else {
-      if(active.current === 'rep') {
+      if(active.current === 'rep' && repScheme) {
       console.log('rep active')
         isModalActive.set(true)
         let repTimeCurr = formatted.current
         userContext.setKey('modal', {
           entry: 'log reps',
-          activeDay: userContext.get().lastDayAttempt, styleFunc: (repsDid: number) => { 
+          activeDay: userContext.get().userSession.day, 
+          styleFunc: (repsDid: number, weightDid = repPercentToWeight(repScheme.percents[userLift.progress.length]) as number) => { 
             setUserLift({
               ...userLift, 
               progress: [...userLift.progress, repsDid],
+              weight: [...userLift.weight, weightDid],
               timeSpentLifting: [...userLift.timeSpentLifting, repTimeCurr || '0 seconds']
             }) 
           }
@@ -150,7 +176,9 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
               {repScheme?.reps.map((n,i)=> (
                 <li key={i} className={`grid grid-cols-2 px-2 py-1 rounded ${liftProgress?.userLift.progress.length === i && activeLiftID?.current === workout.id ? 'bg-amber-400': 'bg-white'}`} ref={activeSet}>
                   <span className="text-left">Set {i+1}: {n} reps</span> 
-                  <span className="text-right"><span>{repScheme.percents[i]}%</span> {Math.round(Math.ceil(workout.currentTrainingMax() * (repScheme.percents[i] * .01) / 5)) * 5} lbs </span>
+                  <span className="text-right">
+                    <span>{repScheme.percents[i]}%</span> - {repPercentToWeight(repScheme.percents[i])} lbs
+                  </span>
                 </li>
               ))} 
             </ol>
@@ -163,16 +191,15 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
           </div>
 
           <div className="flex justify-center">
-            {liftProgress?.userLift.timer.active.current === 'rest' ? <Modal useCase="log reps"/> : null }
+            {liftProgress?.userLift.timer.active.current === 'rest' ? <Modal useCase="log reps"/> : null}
             <button onClick={() => onSelect(-1)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
-            Back
+              Back
             </button> 
             <button 
-            onClick={ () => {
+            onClick={() => {
               activeLiftID && activeLiftID.current === workout.id && !liftProgress?.userLift.finishedSets ?
               finishedSets() : 
               null
-
             }} 
             className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
               Finish all sets
