@@ -1,4 +1,4 @@
-import { type ArchivedLift } from '../data/UserData.ts'
+import { type ArchivedLift } from '../data/UserData.tsx'
 
 export default function Log({title, content, record}: {title: string, content: string, record: ArchivedLift}) {
   //record should hold the lifts name, users 5rm as of the date of record creation

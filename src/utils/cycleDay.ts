@@ -16,7 +16,6 @@ export function cycleWeek(
   programDays?: TemplateDates[] | null,
 ) {
   if(!prevWeek || !prevDay || !programDays || !programWeeks) return 'w1'
-  const weeks: TemplateProgramWeeks[] = ['w1', 'w2', 'w3', 'w4']
 
   if(programDays.indexOf(prevDay) === programDays.length - 1) {
     let newWeekIndex = programWeeks.indexOf(prevWeek) + 1
@@ -25,11 +24,6 @@ export function cycleWeek(
   }
   return prevWeek
 }
-function isLastDayofProgram(programDays: TemplateDates[], date: TemplateDates) {
-  if(!programDays || !date) return false
-  if(programDays.indexOf(date) === programDays.length - 1) return true
-  return false
-}
 
 export function cycleYear(prevYear?: Year) {
   const thisYear = new Date().getFullYear().toString() as Year
@@ -37,20 +31,20 @@ export function cycleYear(prevYear?: Year) {
   return prevYear
 }
 
-  const months: Months[] = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
-  ]
+const months: Months[] = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
+]
   
 export function cycleMonth(prevMonth?: Months) {
   const mI = new Date().getMonth()

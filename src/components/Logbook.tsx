@@ -1,6 +1,10 @@
 import Log from "./Log";
-
+import { userContext } from "../data/UserData";
 export default function LogBook() {
+  const { archive, userSession, lastYearAttempt, lastMonthAttempt, lastDayAttempt, lastWeekAttempt  } = userContext.get();
+   
+    
+
   return (
     <div>
       <h2 className="text-lg font-bold">Log</h2>
