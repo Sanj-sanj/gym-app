@@ -36,8 +36,10 @@ export type AppContext = {
     date: string | null,
   }
   archive: { 
-    [T in TemplatePrograms]: Partial<Record<Year, Record<Months,
-    Record<string, Record<number, {
+    [T in TemplatePrograms]: Partial<Record<Year, Record<Months, Record<string, ArchivedLift>> >>
+  } 
+}
+export type ArchivedLift = Record<number, {
       day: TemplateDates,
       week: TemplateProgramWeeks,
       liftDataByID: Record<number, {
@@ -48,10 +50,7 @@ export type AppContext = {
         timeSpentLifting: string[],
         timeSpentResting: string[]
       }>,
-    }>>>>>
-  } 
-}
-
+    }>
 
 const Initial: AppContext = {
   userName: null,

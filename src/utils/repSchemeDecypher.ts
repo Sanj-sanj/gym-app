@@ -12,8 +12,8 @@ export default function repSchemeSolver(
     orderOfAppearance === 1 ?
     'tier2' :
     'accessory' ;
-  const weightPercents = modifiers[week][exerciseTier];
-  const reps = exerciseTier === 'accessory' ? repScheme.accessory['w1'] as string[]: repScheme[exerciseTier][week];
+  const weightPercents = modifiers[week]![exerciseTier];
+  const reps = repScheme[exerciseTier]![week] as string[]
 
   return { reps, percents: weightPercents }
 }

@@ -133,7 +133,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
         <button
         title="Click/tap to preview"
         onClick={!isSelected ? () => onSelect(workout.id) : () => {}}
-        className={`w-full p-4 rounded ${isSelected ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+        className={`w-full p-4 rounded outline shadow shadow-neutral-600 outline-stone-500 ${isSelected ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-mauve-200  text-gray-800 hover:bg-mauve-100'}`}
         >
         {workout.name}
         </button>
@@ -166,7 +166,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
 
       {workout instanceof WorkoutEntry && isSelected  ? (
         <>
-          <div className="text-center mt-4 p-4 bg-white rounded shadow relative">
+          <div className="text-center mt-4 p-4 bg-stone-100 rounded shadow relative">
             <h3 className="text-xl font-bold">{workout.name}</h3>
 
             <p>Current training max: {workout.currentTrainingMax()} lbs</p>
@@ -174,7 +174,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
             <h4 className="font-bold">Rep Scheme:</h4>
             <ol>
               {repScheme?.reps.map((n,i)=> (
-                <li key={i} className={`grid grid-cols-2 px-2 py-1 rounded ${liftProgress?.userLift.progress.length === i && activeLiftID?.current === workout.id ? 'bg-amber-400': 'bg-white'}`} ref={activeSet}>
+                <li key={i} className={`grid grid-cols-2 px-2 py-1 rounded ${liftProgress?.userLift.progress.length === i && activeLiftID?.current === workout.id ? 'bg-amber-400': 'bg-stone-100'}`} ref={activeSet}>
                   <span className="text-left">Set {i+1}: {n} reps</span> 
                   <span className="text-right">
                     <span>{repScheme.percents[i]}%</span> - {repPercentToWeight(repScheme.percents[i])} lbs

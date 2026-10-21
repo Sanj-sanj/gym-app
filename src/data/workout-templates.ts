@@ -1,25 +1,25 @@
 export type TemplatePrograms = 'ppl' | '531' | 'fullbody';
 export type TemplateNames = 'PPL' | '5/3/1' | 'Full Body';
 export type TemplateDates = 'day1' | 'day2' | 'day3' | 'day4' | 'day5' | 'day6';
-export type TemplateProgramWeeks = 'w1' | 'w2' | 'w3' | 'w4';
+export type TemplateProgramWeeks = 'w1' | 'w2' | 'w3' | 'w4' | 'w5' | 'w6' | 'w7';
 export type TemplateByDay = Partial<Record<TemplateDates ,{ name: string, exercise_id: number[]}>>;
 
 export type TemplateOption= { 
   id: TemplatePrograms; 
   name: TemplateNames, 
   repScheme: {
-    tier1: Record<TemplateProgramWeeks, string[]>,
-    tier2: Record<TemplateProgramWeeks, string[]>,
+    tier1: Partial<Record<TemplateProgramWeeks, string[]>>,
+    tier2: Partial<Record<TemplateProgramWeeks, string[]>>,
     accessory: Partial<Record<TemplateProgramWeeks, string[]>>,
   },
  programming: TemplateByDay
-  modifiers: { 
+  modifiers: Partial<{ 
     [key in TemplateProgramWeeks]: {
       tier1: number[],
       tier2: number[],
       accessory: number[],
     }
-  }
+  }>
 }
 export const WorkoutTemplates:TemplateOption[] = [
   { 
@@ -82,18 +82,27 @@ export const WorkoutTemplates:TemplateOption[] = [
           w2: ['10','10','10','10','10'], 
           w3: ['10','10','10','10','10'], 
           w4: ['10','10','10','10','10'], 
+          w5: ['10','10','10','10','10'], 
+          w6: ['10','10','10','10','10'], 
+          w7: ['10','10','10','10','10'], 
         },
         tier1: {
           w1: ['5','5','3','5','5','5+'], 
           w2: ['5','5','3','3','3','3+'], 
           w3: ['5','5','3','5','3','1+'], 
-          w4: ['5','5','3','5','5','5']
+          w4: ['5','5','3','5','5','5+'], 
+          w5: ['5','5','3','3','3','3+'], 
+          w6: ['5','5','3','5','3','1+'], 
+          w7: ['5','5','3','5','5','5']
         },
         tier2: {
           w1: ['5','5','3','10','10','10'], 
           w2: ['5','5','3','6','6','6'], 
           w3: ['5','5','3','5','5','5'], 
-          w4: ['5','5','3','5','5','5']
+          w4: ['5','5','3','10','10','10'], 
+          w5: ['5','5','3','6','6','6'], 
+          w6: ['5','5','3','5','5','5'], 
+          w7: ['5','5','3','5','5','5']
         }
     },
     programming: {
@@ -119,6 +128,21 @@ export const WorkoutTemplates:TemplateOption[] = [
           accessory: [50,50,50,50,50],
         },
         w4: {
+          tier1: [40, 50, 60, 65, 75, 85],
+          tier2: [40, 50, 60, 50, 60, 70],
+          accessory: [50,50,50,50,50],
+        },
+        w5: {
+          tier1: [40, 50, 60, 70, 80, 90],
+          tier2: [40, 50, 60, 60, 70, 80],
+          accessory: [50,50,50,50,50],
+        },
+        w6: {
+          tier1: [40, 50, 60, 75, 85, 95],
+          tier2: [40, 50, 60, 65, 75, 85],
+          accessory: [50,50,50,50,50],
+        },
+        w7: {
           tier1: [40, 50, 60, 40, 50, 60],
           tier2: [40, 50, 60, 40, 50, 60],
           accessory: [50,50,50,50,50],
