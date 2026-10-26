@@ -106,6 +106,7 @@ export default function ContinueWorkout() {
     })
     localStorage.setItem('userContext', JSON.stringify(userContext.value))
   }
+
   function handleEndofWorkout() {
     userContext.setKey('lastDayAttempt', thisDay)
     userContext.setKey('lastWeekAttempt', thisWeek)
@@ -113,6 +114,7 @@ export default function ContinueWorkout() {
     userContext.setKey('lastYearAttempt', thisYear)
     userContext.setKey('lastEntryTitle', userSession.date!.toLocaleString())
     userContext.setKey('userSession', {day: null, week: null, month: null, year: null, totalDuration: 0, date: null, liftDataByID: {} })
+    userContext.setKey('userLiftStatus', 'idle')
     saveToArchive()
     document.location.replace('/')
   }
@@ -133,13 +135,6 @@ export default function ContinueWorkout() {
       setUserLift({...userLift, [selectedLift.id]: {...selected, goal: repsByTierAndWeek || []} })
     }
   }, [selectedLift])
-
-  console.log(userTemplateInProgress)
-  //console.log(currentSession)
-  //console.log(program)
-  console.log(userLift)
-  //console.log(activeLiftForTimer.current)
-  //console.log(selectedLift?.id)
 
   return (
     <>

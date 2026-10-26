@@ -91,6 +91,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
     const {userLift, setUserLift} = liftProgress
     const {active, formatted}  = userLift.timer
     activeLiftID.current = workout.id
+    if(userContext.get().userLiftStatus === 'idle') userContext.setKey('userLiftStatus', 'lifting')
 
     if(active.current === 'rest') {
       console.log('rest active')
@@ -140,7 +141,11 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
       ) : (
         <button
         title={`Click/tap to ${!liftProgress.userLift.timer.active.current ? 'start' : 'log'} workout.`}
-        onClick={() => !activeLiftID?.current ||  activeLiftID?.current === workout.id && !liftProgress.userLift.finishedSets ? handleLiftSetTransition() : null}
+        onClick={() => 
+          !activeLiftID?.current || activeLiftID?.current === workout.id && !liftProgress.userLift.finishedSets ?
+          handleLiftSetTransition() :
+          null
+        }
         className={`w-full p-4 rounded transition-colors duration-500 ${
           liftProgress.userLift.finishedSets ?
             'bg-mauve-600 text-white hover:bg-mauve-500' :
@@ -177,7 +182,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
                 <li key={i} className={`grid grid-cols-2 px-2 py-1 rounded ${liftProgress?.userLift.progress.length === i && activeLiftID?.current === workout.id ? 'bg-amber-400': 'bg-stone-100'}`} ref={activeSet}>
                   <span className="text-left">Set {i+1}: {liftProgress?.userLift.progress[i] ? liftProgress?.userLift.progress[i] + ' /' || ' /' : ' /'} {n} reps</span> 
                   <span className="text-right">
-                    <span className="a">{repScheme.percents[i]}%</span> 
+                    <span className="a">{repScheme.percents[i]}% </span> 
                     <span className="min-w-20">
                     {liftProgress?.userLift.weight[i] && liftProgress?.userLift.weight[i] !== repPercentToWeight(repScheme.percents[i]) ? liftProgress?.userLift.weight[i] : repPercentToWeight(repScheme.percents[i])} lbs
                     </span>

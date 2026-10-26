@@ -12,7 +12,7 @@ export type AppContext = {
   lastYearAttempt: Year | null,
   lastEntryTitle: string | null,
   userTemplateInProgress: TemplatePrograms | null,
-  userLiftStatus: 'not lifting' | 'lifting' | 'finished',
+  userLiftStatus: 'idle' | 'lifting',
   modal: {
     activeDay: TemplateDates | null,
     entry: "edit lift" | 'new user' | 'log reps' | null,
@@ -59,7 +59,7 @@ const Initial: AppContext = {
   lastMonthAttempt: null,
   lastYearAttempt: null,
   lastEntryTitle: null,
-  userLiftStatus: 'not lifting',
+  userLiftStatus: 'idle',
   userTemplateInProgress: null,
   modal: { activeDay: null, entry: null, styleFunc: null },
   userWorkoutEntries: {},
