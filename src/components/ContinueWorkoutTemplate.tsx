@@ -95,13 +95,18 @@ export default function ContinueWorkout() {
   }
 
   function saveToArchive() {
-    const thisYearContent = archive[userTemplateInProgress as TemplatePrograms][thisYear]
-    const thisMonthContent = thisYearContent![thisMonth]
+    const previous = archive[thisYear][thisMonth][userTemplateInProgress as TemplatePrograms]
+    const thisYearContent = archive[thisYear]
+    const thisMonthContent = archive[thisYear][thisMonth]
     
     userContext.setKey('archive', {
       ...archive,
-      [userTemplateInProgress as TemplatePrograms]: {
-        [thisYear]: {...thisYearContent, [thisMonth]: {...thisMonthContent, [userSession.date!.toLocaleString()]: userSession.liftDataByID }} 
+      [thisYear]: { ...thisYearContent, 
+        [thisMonth]: {...thisMonthContent,
+          [userTemplateInProgress as TemplatePrograms]: {...previous,
+            [userSession.date!.toLocaleString()]: userSession.liftDataByID
+          }
+        }
       }
     })
     localStorage.setItem('userContext', JSON.stringify(userContext.value))

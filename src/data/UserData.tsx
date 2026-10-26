@@ -36,7 +36,9 @@ export type AppContext = {
     date: string | null,
   }
   archive: { 
-    [T in TemplatePrograms]: Partial<Record<Year, Record<Months, Record<string, ArchivedLift>> >>
+    [T in Year] : {
+      [M in Months]: Record<TemplatePrograms, ArchivedLift>
+    }
   } 
 }
 export type ArchivedLift = Record<number, {
@@ -73,9 +75,34 @@ const Initial: AppContext = {
     date: null,
   },
   archive: {
-    ppl: {2026: {Jan: {}, Feb: {}, Mar: {}, Apr: {}, May: {}, Jun: {}, Jul: {}, Aug: {}, Sep: {}, Oct: {}, Nov: {}, Dec: {}}},
-    531: {2026: {Jan: {}, Feb: {}, Mar: {}, Apr: {}, May: {}, Jun: {}, Jul: {}, Aug: {}, Sep: {}, Oct: {}, Nov: {}, Dec: {}}},
-    fullbody: {2026: {Jan: {}, Feb: {}, Mar: {}, Apr: {}, May: {}, Jun: {}, Jul: {}, Aug: {}, Sep: {}, Oct: {}, Nov: {}, Dec: {}}},
+    2026: {
+      Jan: { 531: {}, fullbody: {}, ppl: {} }, 
+      Feb: { 531: {}, fullbody: {}, ppl: {} }, 
+      Mar: { 531: {}, fullbody: {}, ppl: {} }, 
+      Apr: { 531: {}, fullbody: {}, ppl: {} }, 
+      May: { 531: {}, fullbody: {}, ppl: {} }, 
+      Jun: { 531: {}, fullbody: {}, ppl: {} }, 
+      Jul: { 531: {}, fullbody: {}, ppl: {} }, 
+      Aug: { 531: {}, fullbody: {}, ppl: {} }, 
+      Sep: { 531: {}, fullbody: {}, ppl: {} }, 
+      Oct: { 531: {}, fullbody: {}, ppl: {} }, 
+      Nov: { 531: {}, fullbody: {}, ppl: {} }, 
+      Dec: { 531: {}, fullbody: {}, ppl: {} }
+    },
+    2027: {
+      Jan: { 531: {}, fullbody: {}, ppl: {} }, 
+      Feb: { 531: {}, fullbody: {}, ppl: {} }, 
+      Mar: { 531: {}, fullbody: {}, ppl: {} }, 
+      Apr: { 531: {}, fullbody: {}, ppl: {} }, 
+      May: { 531: {}, fullbody: {}, ppl: {} }, 
+      Jun: { 531: {}, fullbody: {}, ppl: {} }, 
+      Jul: { 531: {}, fullbody: {}, ppl: {} }, 
+      Aug: { 531: {}, fullbody: {}, ppl: {} }, 
+      Sep: { 531: {}, fullbody: {}, ppl: {} }, 
+      Oct: { 531: {}, fullbody: {}, ppl: {} }, 
+      Nov: { 531: {}, fullbody: {}, ppl: {} }, 
+      Dec: { 531: {}, fullbody: {}, ppl: {} }
+    },
   },
 }
 export const userContext = map(Initial)
