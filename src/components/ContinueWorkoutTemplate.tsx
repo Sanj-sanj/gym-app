@@ -8,6 +8,7 @@ import repSchemeSolver from "../utils/repSchemeDecypher"
 import ProgressBar from "./ProgressBar"
 import { Timer } from "./Timer"
 import { cycleDay, cycleMonth, cycleWeek, cycleYear } from "../utils/cycleDay"
+import once from '../utils/once'
 
 export default function ContinueWorkout() {
   const {archive, userSession, userTemplateInProgress, userWorkoutEntries} = userContext.get()
@@ -17,10 +18,9 @@ export default function ContinueWorkout() {
   if(!program) return <>No program found, wait a bit or make a <a href="/" className="text-blue-700 font-medium underline">New Template!</a></>
 
   function useSessionInit(preDay?: TemplateDates, preWeek?: TemplateProgramWeeks, preMonth?: Months, preYear?: Year) {
-      const date = new Date().toLocaleString()
+      const date = new Date()
       const programWeeks = Object.keys(program!.modifiers).map(v => v as TemplateProgramWeeks)
       const programDays = Object.keys(program!.programming).map(v => v as TemplateDates)
-
       userContext.setKey('userSession', {
         ...userSession,
         date,
@@ -36,21 +36,26 @@ export default function ContinueWorkout() {
   } else if(!userSession.day && !userSession.week && !userSession.year) {
     useSessionInit()
   }
+
   const thisDay = userSession.day as TemplateDates
   const thisWeek = userSession.week as TemplateProgramWeeks
   const thisYear = userSession.year as Year
   const thisMonth = userSession.month as Months
   const currentSession = program.programming[thisDay] as { name: string, exercise_id: number[] }
 
+  const onceRef = useRef(false)
+  const totalDuration = useRef<string | null>(null)
+  const [totalDurTimer, setTotalDurTimer] = useState<Date | null>(null)
   const totalProgress = useRef<Record<number, boolean>>(currentSession.exercise_id.reduce((acc, curr) => ({...acc, [curr]: false}), {}))
   const activeLiftForTimer = useRef<number | null>(null)
   const [progBar, setProgBar] = useState(0) // MAX VALUE 10
   const [selectedLift, setSelectedLift] = useState<{id: number, appearance: number}| null>(null)
   const [timer, setTimer] = useState<Date | null>(null)
   const [userLift, setUserLift] = useState<Record<number, {
-    goal: string[], 
-    progress: number[],
-    weight: number[],
+    goalReps: string[], 
+    progressReps: number[],
+    goalWeight: number[],
+    progressWeight: number[],
     timeSpentLifting: string[], 
     timeSpentResting: string[], 
     finishedSets: boolean, 
@@ -61,9 +66,10 @@ export default function ContinueWorkout() {
   }>>(Object.values(currentSession?.exercise_id || [])
     .reduce((acc,curr) => (
       {...acc, [curr]: {
-        goal: Object.values(program.repScheme[appearanceToTier(currentSession.exercise_id.indexOf(Number(curr)))][thisWeek] || {}).map(v => v), 
-        progress: [],
-        weight: [],
+        goalReps: Object.values(program.repScheme[appearanceToTier(currentSession.exercise_id.indexOf(Number(curr)))][thisWeek] || {}).map(v => v), 
+        progressReps: [],
+        goalWeight: [],
+        progressWeight: [],
         timeSpentLifting: [],
         timeSpentResting: [],
         finishedSets: false,
@@ -98,13 +104,12 @@ export default function ContinueWorkout() {
     const previous = archive[thisYear][thisMonth][userTemplateInProgress as TemplatePrograms]
     const thisYearContent = archive[thisYear]
     const thisMonthContent = archive[thisYear][thisMonth]
-    
     userContext.setKey('archive', {
       ...archive,
       [thisYear]: { ...thisYearContent, 
         [thisMonth]: {...thisMonthContent,
           [userTemplateInProgress as TemplatePrograms]: {...previous,
-            [userSession.date!.toLocaleString()]: userSession.liftDataByID
+            [userSession.date!.toLocaleString()]: {...userSession, notes: '', totalDuration: totalDuration.current}
           }
         }
       }
@@ -126,6 +131,9 @@ export default function ContinueWorkout() {
 
   useEffect(() => {
     if(userLift) {
+   if(userContext.get().userLiftStatus ==='lifting') {
+     once(onceRef, () => setTotalDurTimer(new Date))
+   } 
       console.log('lift', userLift)
       if(userCompletedSets()) { 
         setProgBar(progBar + 10 / currentSession.exercise_id.length)
@@ -137,7 +145,7 @@ export default function ContinueWorkout() {
     if(selectedLift) {
       const selected = userLift[selectedLift.id]
       const repsByTierAndWeek = program.repScheme[appearanceToTier(selectedLift.appearance)][thisWeek]
-      setUserLift({...userLift, [selectedLift.id]: {...selected, goal: repsByTierAndWeek || []} })
+      setUserLift({...userLift, [selectedLift.id]: {...selected, goalReps: repsByTierAndWeek || []} })
     }
   }, [selectedLift])
 
@@ -181,9 +189,10 @@ export default function ContinueWorkout() {
             liftProgress={{
               userLift: userLift[selectedLift.id], 
               setUserLift: (newProgress: {
-                goal: string[], 
-                progress: number[], 
-                weight: number[], 
+                goalReps: string[], 
+                goalWeight: number[], 
+                progressReps: number[], 
+                progressWeight: number[], 
                 timeSpentLifting: string[], 
                 timeSpentResting: string[], 
                 finishedSets: boolean,
@@ -202,6 +211,7 @@ export default function ContinueWorkout() {
           <Timer timerStart={timer} ref={userLift[activeLiftForTimer.current].timer.formatted || null} /> :
           null
           }
+          {userContext.get().userLiftStatus === 'lifting' ? <Timer timerStart={totalDurTimer} ref={totalDuration} /> : null}
           <ProgressBar progression={progBar} />
 
           {Object.values(totalProgress.current).every(v => v) ? (

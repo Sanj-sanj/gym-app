@@ -33,7 +33,7 @@ export type AppContext = {
       timeSpentResting: string[]
     }>,
     totalDuration: number,
-    date: string | null,
+    date: Date | null,
   }
   archive: { 
     [T in Year] : {
@@ -41,9 +41,13 @@ export type AppContext = {
     }
   } 
 }
-export type ArchivedLift = Record<number, {
+export type ArchivedLift = Record<string, {
       day: TemplateDates,
       week: TemplateProgramWeeks,
+      month: Months,
+      year: Year,
+      totalDuration: number,
+      notes: string,
       liftDataByID: Record<number, {
         goalReps: string[],
         goalWeight: number[],

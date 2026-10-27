@@ -13,9 +13,10 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
   activeLiftID?: React.RefObject<number | null>,
   liftProgress?: {
     userLift: {
-      goal: string[];
-      progress: number[];
-      weight: number[];
+      goalReps: string[];
+      progressReps: number[];
+      goalWeight: number[];
+      progressWeight: number[];
       timeSpentLifting: string[];
       timeSpentResting: string[];
       finishedSets: boolean
@@ -25,9 +26,10 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
       }
     },
     setUserLift: (newProgress: { 
-      goal: string[],
-      progress: number[],
-      weight: number[],
+      goalReps: string[];
+      progressReps: number[];
+      goalWeight: number[];
+      progressWeight: number[];
       timeSpentLifting: string[];
       timeSpentResting: string[];
       finishedSets: boolean,
@@ -40,23 +42,18 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
 }) {
   const activeSet = useRef<HTMLLIElement| null>(null)
 
- // console.log(activeSet.current)
- // console.log(workout, repScheme)
- // console.log(liftProgress?.userLift)
-
   function handleContextProgression() {
     if(!liftProgress || !repScheme) return;
     const {userLift} = liftProgress
     const newLiftData  =  {
-        goalReps: userLift.goal,
-        goalWeight: repScheme.percents.map(percent => repPercentToWeight(percent)) as number[],
-        progressReps: userLift.progress,
-        progressWeight: userLift.weight,
+        goalReps: userLift.goalReps,
+        goalWeight: userLift.goalWeight,
+        progressReps: userLift.progressReps,
+        progressWeight: userLift.progressWeight,
         timeSpentLifting: userLift.timeSpentLifting,
         timeSpentResting: userLift.timeSpentResting
     }
   console.log(newLiftData)
-
    const prev = userContext.get().userSession
     userContext.setKey('userSession', {...prev, liftDataByID: {...prev.liftDataByID, [workout.id]: newLiftData}} )
   }
@@ -65,11 +62,12 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
     if(workout instanceof WorkoutEntry)
       return Math.round(Math.ceil(workout.currentTrainingMax() * (percent * .01) / 5)) * 5
   }
+
   useEffect(() => {
     handleContextProgression()
-    const goal = liftProgress?.userLift.goal
-    const progress = liftProgress?.userLift.progress
-    if(goal && progress && goal.length === progress.length && !liftProgress.userLift.finishedSets) {
+    const goalReps = liftProgress?.userLift.goalReps
+    const progressReps = liftProgress?.userLift.progressReps
+    if(goalReps && progressReps && goalReps.length === progressReps.length && !liftProgress.userLift.finishedSets) {
       finishedSets()
     }
   })
@@ -81,9 +79,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
     userLift.timer.active.current = null
     userLift.timer.formatted.current = null
     activeLiftID.current = null
-
     setUserLift({...userLift, finishedSets: true})
-    
   }
 
   function handleLiftSetTransition() {
@@ -97,7 +93,7 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
       console.log('rest active')
       setUserLift({...userLift, timeSpentResting: [...userLift.timeSpentResting, formatted.current || '0 seconds'] })
       setTimer(new Date()) 
-      if(userLift.progress.length < userLift.goal.length) active.current = 'rep'
+      if(userLift.progressReps.length < userLift.goalReps.length) active.current = 'rep'
         else active.current = null
     } else {
       if(active.current === 'rep' && repScheme) {
@@ -107,11 +103,11 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
         userContext.setKey('modal', {
           entry: 'log reps',
           activeDay: userContext.get().userSession.day, 
-          styleFunc: (repsDid: number, weightDid = repPercentToWeight(repScheme.percents[userLift.progress.length]) as number) => { 
+          styleFunc: (repsDid: number, weightDid = repPercentToWeight(repScheme.percents[userLift.progressReps.length]) as number) => { 
             setUserLift({
               ...userLift, 
-              progress: [...userLift.progress, repsDid],
-              weight: [...userLift.weight, weightDid],
+              progressReps: [...userLift.progressReps, repsDid],
+              progressWeight: [...userLift.progressWeight, weightDid],
               timeSpentLifting: [...userLift.timeSpentLifting, repTimeCurr || '0 seconds']
             }) 
           }
@@ -121,53 +117,55 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
         console.log('handler ', userLift)
       }
     }
-    if(!active.current && userLift.finishedSets === false )  {
+    if(!active.current && userLift.finishedSets === false && repScheme )  {
       setTimer(new Date())
       active.current = 'rep'
+      setUserLift({
+        ...userLift,
+        goalWeight: repScheme.percents.map(percent => repPercentToWeight(percent)) as number[]
+      })
     }
   }
 
   return (
     <div className={`transition-all duration-300 delay-700 ${isSelected ? 'w-10/12 sm:w-96 mx-auto mt-8' : 'w-64 mx-2 my-4'}`}> 
 
-    { !liftProgress ? (
-        <button
-        title="Click/tap to preview"
-        onClick={!isSelected ? () => onSelect(workout.id) : () => {}}
-        className={`w-full p-4 rounded outline shadow shadow-neutral-600 outline-stone-500 ${isSelected ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-mauve-200  text-gray-800 hover:bg-mauve-100'}`}
-        >
-        {workout.name}
-        </button>
-      ) : (
-        <button
-        title={`Click/tap to ${!liftProgress.userLift.timer.active.current ? 'start' : 'log'} workout.`}
-        onClick={() => 
-          !activeLiftID?.current || activeLiftID?.current === workout.id && !liftProgress.userLift.finishedSets ?
-          handleLiftSetTransition() :
-          null
-        }
-        className={`w-full p-4 rounded transition-colors duration-500 ${
-          liftProgress.userLift.finishedSets ?
-            'bg-mauve-600 text-white hover:bg-mauve-500' :
-          liftProgress.userLift.timer.active.current === 'rest' ? 
-            'bg-green-600 text-white hover:bg-green-500' :
-          liftProgress.userLift.timer.active.current === 'rep' ? 
-            'bg-yellow-500  hover:bg-yellow-400' :
-            'bg-indigo-600 text-white hover:bg-indigo-500'
-        }`}
-        >
-        {
-          liftProgress.userLift.finishedSets ? 
+    {!liftProgress ? (
+      <button
+      title="Click/tap to preview"
+      onClick={!isSelected ? () => onSelect(workout.id) : () => {}}
+      className={`w-full p-4 rounded outline shadow shadow-neutral-600 outline-stone-500 ${isSelected ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'bg-mauve-200  text-gray-800 hover:bg-mauve-100'}`}
+      >
+      {workout.name}
+      </button>
+    ) : (
+    <button
+    title={`Click/tap to ${!liftProgress.userLift.timer.active.current ? 'start' : 'log'} workout.`}
+    onClick={() => 
+      !activeLiftID?.current || activeLiftID?.current === workout.id && !liftProgress.userLift.finishedSets ?
+        handleLiftSetTransition() :
+        null
+    }
+    className={`w-full p-4 rounded transition-colors duration-500 ${
+      liftProgress.userLift.finishedSets ?
+        'bg-mauve-600 text-white hover:bg-mauve-500' :
+        liftProgress.userLift.timer.active.current === 'rest' ? 
+        'bg-green-600 text-white hover:bg-green-500' :
+        liftProgress.userLift.timer.active.current === 'rep' ? 
+        'bg-yellow-500  hover:bg-yellow-400' :
+        'bg-indigo-600 text-white hover:bg-indigo-500'
+    }`}>
+      {
+        liftProgress.userLift.finishedSets ? 
           'All sets completed!' : 
           liftProgress.userLift.timer.active.current === null ?
           'Tap to start set' :
           liftProgress.userLift.timer.active.current === 'rep' ?
           'Tap to rest' : 
           'Tap to lift'
-        }
-        </button>
-      )
-    }
+      }
+    </button>
+    )}
 
       {workout instanceof WorkoutEntry && isSelected  ? (
         <>
@@ -179,12 +177,14 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
             <h4 className="font-bold">Rep Scheme:</h4>
             <ol>
               {repScheme?.reps.map((n,i)=> (
-                <li key={i} className={`grid grid-cols-2 px-2 py-1 rounded ${liftProgress?.userLift.progress.length === i && activeLiftID?.current === workout.id ? 'bg-amber-400': 'bg-stone-100'}`} ref={activeSet}>
-                  <span className="text-left">Set {i+1}: {liftProgress?.userLift.progress[i] ? liftProgress?.userLift.progress[i] + ' /' || ' /' : ' /'} {n} reps</span> 
-                  <span className="text-right">
+                <li key={i} className={`grid grid-cols-2 px-2 py-1 rounded ${liftProgress?.userLift.progressReps.length === i && activeLiftID?.current === workout.id ? 'bg-amber-400': 'bg-stone-100'}`} ref={activeSet}>
+                  <span className="text-left flex flex-col sm:flex-row">
+                    <span>Set {i+1}: </span><span>{liftProgress?.userLift.progressReps[i] ? liftProgress?.userLift.progressReps[i] + ' /' || ' /' : ' /'} {n} reps</span>
+                  </span> 
+                  <span className="text-right flex justify-end flex-col sm:flex-row">
                     <span className="a">{repScheme.percents[i]}% </span> 
-                    <span className="min-w-20">
-                    {liftProgress?.userLift.weight[i] && liftProgress?.userLift.weight[i] !== repPercentToWeight(repScheme.percents[i]) ? liftProgress?.userLift.weight[i] : repPercentToWeight(repScheme.percents[i])} lbs
+                    <span className="min-w-[7ch]">
+                    {liftProgress?.userLift.progressWeight[i] && liftProgress?.userLift.progressWeight[i] !== repPercentToWeight(repScheme.percents[i]) ? liftProgress?.userLift.progressWeight[i] : repPercentToWeight(repScheme.percents[i])} lbs
                     </span>
                   </span>
                 </li>
@@ -203,15 +203,15 @@ export default function WorkoutCard({ workout, isSelected, repScheme, onSelect, 
             <button onClick={() => onSelect(-1)} className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
               Back
             </button> 
-            <button 
-            onClick={() => {
-              activeLiftID && activeLiftID.current === workout.id && !liftProgress?.userLift.finishedSets ?
+            {activeLiftID ? (
+            <button onClick={() => { activeLiftID && activeLiftID.current === workout.id && !liftProgress?.userLift.finishedSets ?
               finishedSets() : 
               null
             }} 
             className='px-4 py-2 border mt-2 border-indigo-600 text-indigo-600 rounded hover:bg-indigo-100 transition-colors'>
               Finish all sets
-            </button> 
+            </button> ) : 
+            null }
           </div>
         </>
       ) : null}

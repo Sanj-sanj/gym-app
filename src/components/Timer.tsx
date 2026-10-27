@@ -1,23 +1,8 @@
-import { formatDuration, intervalToDuration } from "date-fns";
-import { useEffect, useState, type RefObject } from "react";
+import { type RefObject } from "react";
+import useTimer from "../utils/userTimer";
 
 export function Timer({timerStart, ref, startValue = '0 seconds'}: {timerStart: Date | null, ref: null | RefObject<string | null>, startValue?: string}) {
-  const [time, setTime] = useState<string>(startValue)
-
-  useEffect(() => {
-    if(!timerStart || !ref) return;
-    const interval = setInterval(() => {
-      const now = new Date()
-      const durr = intervalToDuration({start: timerStart, end: now})
-      setTime(formatDuration(durr))
-    }, 1000)
-    ref.current = time
-
-    return () => {
-      clearInterval(interval)
-    }
-  })
-
+  const { time } = useTimer({timerStart, ref, startValue})
   return (
     <span>
       {time}
